@@ -1,7 +1,6 @@
-
 import React, { useState } from 'react';
 import { Location, LocationCategory, LocationStatus } from '@/hooks/useMap';
-import { X, Save, Trash, Building2, Road, Landmark, Check, Clock, AlertTriangle } from 'lucide-react';
+import { X, Save, Trash, Building2, Route, Landmark, Check, Clock, AlertTriangle } from 'lucide-react';
 
 interface LocationFormProps {
   location: Location;
@@ -21,7 +20,6 @@ const LocationForm: React.FC<LocationFormProps> = ({
   const [formData, setFormData] = useState<Location>(location);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   
-  // Handle form input changes
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -29,7 +27,6 @@ const LocationForm: React.FC<LocationFormProps> = ({
       [name]: value
     }));
     
-    // Clear error for this field if it exists
     if (errors[name]) {
       setErrors(prev => {
         const newErrors = { ...prev };
@@ -39,7 +36,6 @@ const LocationForm: React.FC<LocationFormProps> = ({
     }
   };
   
-  // Set category
   const setCategory = (category: LocationCategory) => {
     setFormData(prev => ({
       ...prev,
@@ -47,7 +43,6 @@ const LocationForm: React.FC<LocationFormProps> = ({
     }));
   };
   
-  // Set status (admin only)
   const setStatus = (status: LocationStatus) => {
     if (isAdminView) {
       setFormData(prev => ({
@@ -57,7 +52,6 @@ const LocationForm: React.FC<LocationFormProps> = ({
     }
   };
   
-  // Validate form before submission
   const validateForm = () => {
     const newErrors: { [key: string]: string } = {};
     
@@ -73,7 +67,6 @@ const LocationForm: React.FC<LocationFormProps> = ({
     return Object.keys(newErrors).length === 0;
   };
   
-  // Handle form submission
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -82,7 +75,6 @@ const LocationForm: React.FC<LocationFormProps> = ({
     }
   };
   
-  // Confirm deletion
   const confirmDelete = () => {
     if (window.confirm('Are you sure you want to delete this location?')) {
       onDelete(location.id);
@@ -105,7 +97,6 @@ const LocationForm: React.FC<LocationFormProps> = ({
       </div>
       
       <form onSubmit={handleSubmit} className="p-4">
-        {/* Name Input */}
         <div className="mb-4">
           <label htmlFor="name" className="block text-sm font-medium mb-1">
             Location Name
@@ -124,7 +115,6 @@ const LocationForm: React.FC<LocationFormProps> = ({
           )}
         </div>
         
-        {/* Category Selection */}
         <div className="mb-4">
           <label className="block text-sm font-medium mb-1">
             Category
@@ -137,7 +127,7 @@ const LocationForm: React.FC<LocationFormProps> = ({
               onClick={() => setCategory('business')}
             />
             <CategoryButton 
-              icon={<Road size={16} />}
+              icon={<Route size={16} />}
               label="Road"
               isSelected={formData.category === 'road'}
               onClick={() => setCategory('road')}
@@ -151,7 +141,6 @@ const LocationForm: React.FC<LocationFormProps> = ({
           </div>
         </div>
         
-        {/* Status Selection (Admin Only) */}
         {isAdminView && (
           <div className="mb-4">
             <label className="block text-sm font-medium mb-1">
@@ -183,7 +172,6 @@ const LocationForm: React.FC<LocationFormProps> = ({
           </div>
         )}
         
-        {/* Description Textarea */}
         <div className="mb-4">
           <label htmlFor="description" className="block text-sm font-medium mb-1">
             Description
@@ -201,7 +189,6 @@ const LocationForm: React.FC<LocationFormProps> = ({
           )}
         </div>
         
-        {/* Coordinates Display (Read-only) */}
         <div className="mb-4 grid grid-cols-2 gap-3">
           <div>
             <label htmlFor="lat" className="block text-sm font-medium mb-1">
@@ -229,7 +216,6 @@ const LocationForm: React.FC<LocationFormProps> = ({
           </div>
         </div>
         
-        {/* Image Upload Placeholder */}
         <div className="mb-6">
           <label className="block text-sm font-medium mb-1">
             Images
@@ -248,7 +234,6 @@ const LocationForm: React.FC<LocationFormProps> = ({
           </div>
         </div>
         
-        {/* Action Buttons */}
         <div className="flex justify-between">
           <button
             type="button"
@@ -281,7 +266,6 @@ const LocationForm: React.FC<LocationFormProps> = ({
   );
 };
 
-// Category button component
 interface CategoryButtonProps {
   icon: React.ReactNode;
   label: string;
@@ -311,7 +295,6 @@ const CategoryButton: React.FC<CategoryButtonProps> = ({
   );
 };
 
-// Status button component
 interface StatusButtonProps {
   icon: React.ReactNode;
   label: string;

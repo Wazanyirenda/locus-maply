@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Layers, X, Check, Building2, Road, Landmark, UserCheck, Clock, AlertTriangle, Search, User } from 'lucide-react';
+import { Layers, X, Check, Building2, Route, Landmark, UserCheck, Clock, AlertTriangle, Search, User } from 'lucide-react';
 import { MapFilters, LocationCategory, LocationStatus } from '@/hooks/useMap';
 
 interface MapControlsProps {
@@ -104,7 +104,7 @@ const MapControls: React.FC<MapControlsProps> = ({
             onClick={() => toggleCategory('business')}
           />
           <CategoryFilterButton 
-            icon={<Road size={14} />}
+            icon={<Route size={14} />}
             label="Road"
             isActive={filters.categories.includes('road')}
             onClick={() => toggleCategory('road')}
