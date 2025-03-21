@@ -1,211 +1,96 @@
 
 import React from 'react';
-import { Users, Map, CheckSquare, AlertTriangle, TrendingUp, Activity } from 'lucide-react';
+import { BarChart3, UserCheck, Clock, CheckCircle, XCircle, MapPin } from 'lucide-react';
 
-// Mock stats data
-const mockStats = {
-  totalUsers: 214,
-  activeToday: 45,
-  pendingLocations: 12,
-  locationsAdded: {
-    today: 23,
-    weekly: 178,
-    monthly: 532
-  },
-  completionRate: 94.2,
-  newUsersRate: 12.5,
-  recentLocations: [
-    { id: 1, name: 'Lusaka City Mall', status: 'pending', timestamp: '10 minutes ago' },
-    { id: 2, name: 'Central Business District', status: 'verified', timestamp: '35 minutes ago' },
-    { id: 3, name: 'Unity Road', status: 'rejected', timestamp: '1 hour ago' },
-    { id: 4, name: 'Northmead Shopping Area', status: 'pending', timestamp: '2 hours ago' }
-  ]
+// Mock statistics for demo purposes
+const adminStats = {
+  totalUsers: 842,
+  pendingKyc: 27,
+  pendingLocations: 53,
+  verifiedLocations: 1287,
+  rejectedLocations: 95,
+  activeUsersToday: 124
 };
 
 const AdminStats: React.FC = () => {
   return (
-    <div className="space-y-6 animate-fade-in">
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard
-          title="Total Users"
-          value={mockStats.totalUsers}
-          icon={<Users className="h-5 w-5" />}
-          description={`${mockStats.activeToday} active today`}
-          trend={+12.5}
-        />
-        <StatCard
-          title="Pending Locations"
-          value={mockStats.pendingLocations}
-          icon={<Map className="h-5 w-5" />}
-          description="Awaiting verification"
-          color="bg-map-pending"
-        />
-        <StatCard
-          title="Completion Rate"
-          value={`${mockStats.completionRate}%`}
-          icon={<CheckSquare className="h-5 w-5" />}
-          description="Verification process"
-          trend={+2.3}
-        />
-        <StatCard
-          title="Added Today"
-          value={mockStats.locationsAdded.today}
-          icon={<TrendingUp className="h-5 w-5" />}
-          description={`${mockStats.locationsAdded.weekly} this week`}
-          trend={+5.7}
-        />
-      </div>
-      
-      {/* Recent Activity */}
-      <div className="glass-card">
-        <div className="p-5 border-b border-border/50">
-          <h2 className="text-xl font-medium">Recent Activity</h2>
-        </div>
-        <div className="p-2">
-          <table className="w-full">
-            <thead>
-              <tr className="text-xs text-muted-foreground">
-                <th className="px-3 py-2 text-left">Location</th>
-                <th className="px-3 py-2 text-left">Status</th>
-                <th className="px-3 py-2 text-right">Time</th>
-              </tr>
-            </thead>
-            <tbody>
-              {mockStats.recentLocations.map((location) => (
-                <tr key={location.id} className="border-t border-border/50">
-                  <td className="px-3 py-3 text-sm font-medium">{location.name}</td>
-                  <td className="px-3 py-3">
-                    <StatusBadge status={location.status as 'pending' | 'verified' | 'rejected'} />
-                  </td>
-                  <td className="px-3 py-3 text-sm text-right text-muted-foreground">{location.timestamp}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-        <div className="p-4 border-t border-border/50 text-right">
-          <button className="text-sm text-primary hover:underline">View All Activity</button>
-        </div>
-      </div>
-      
-      {/* System Status */}
-      <div className="glass-card p-5">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-medium">System Status</h2>
-          <div className="flex items-center text-map-verified">
-            <Activity className="h-4 w-4 mr-1.5" />
-            <span className="text-sm">All systems operational</span>
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="glass-card p-5 animate-fade-in">
+        <div className="flex justify-between items-center mb-2">
+          <h3 className="text-lg font-medium">Total Users</h3>
+          <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+            <UserCheck size={20} />
           </div>
         </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <MetricCard title="Database" value="12ms" desc="Response time" positive={true} />
-          <MetricCard title="API Requests" value="1.2k/hr" desc="Current rate" positive={true} />
-          <MetricCard title="Error Rate" value="0.05%" desc="Last 24 hours" positive={true} />
-        </div>
+        <p className="text-3xl font-bold">{adminStats.totalUsers}</p>
+        <p className="text-sm text-muted-foreground mt-1">
+          <span className="text-map-verified">+12</span> in the last 7 days
+        </p>
       </div>
-    </div>
-  );
-};
-
-// Stat card component
-interface StatCardProps {
-  title: string;
-  value: number | string;
-  icon: React.ReactNode;
-  description: string;
-  trend?: number;
-  color?: string;
-}
-
-const StatCard: React.FC<StatCardProps> = ({
-  title,
-  value,
-  icon,
-  description,
-  trend,
-  color = 'bg-primary'
-}) => {
-  return (
-    <div className="glass-card p-5">
-      <div className="flex items-start justify-between">
-        <div>
-          <p className="text-sm text-muted-foreground">{title}</p>
-          <p className="text-2xl font-semibold mt-1">{value}</p>
-        </div>
-        <div className={`${color} text-white p-2 rounded-md`}>
-          {icon}
-        </div>
-      </div>
-      <div className="flex items-center justify-between mt-3">
-        <p className="text-xs text-muted-foreground">{description}</p>
-        {trend !== undefined && (
-          <div className={`flex items-center text-xs ${trend >= 0 ? 'text-map-verified' : 'text-map-rejected'}`}>
-            {trend >= 0 ? (
-              <TrendingUp className="h-3 w-3 mr-1" />
-            ) : (
-              <AlertTriangle className="h-3 w-3 mr-1" />
-            )}
-            {Math.abs(trend)}%
+      
+      <div className="glass-card p-5 animate-fade-in">
+        <div className="flex justify-between items-center mb-2">
+          <h3 className="text-lg font-medium">Pending KYC</h3>
+          <div className="h-10 w-10 rounded-full bg-map-pending/10 flex items-center justify-center text-map-pending">
+            <Clock size={20} />
           </div>
-        )}
+        </div>
+        <p className="text-3xl font-bold">{adminStats.pendingKyc}</p>
+        <p className="text-sm text-muted-foreground mt-1">
+          Awaiting verification
+        </p>
       </div>
-    </div>
-  );
-};
-
-// Status badge component
-interface StatusBadgeProps {
-  status: 'pending' | 'verified' | 'rejected';
-}
-
-const StatusBadge: React.FC<StatusBadgeProps> = ({ status }) => {
-  const getStatusDetails = () => {
-    switch (status) {
-      case 'verified':
-        return { class: 'status-verified', label: 'Verified' };
-      case 'pending':
-        return { class: 'status-pending', label: 'Pending' };
-      case 'rejected':
-        return { class: 'status-rejected', label: 'Rejected' };
-      default:
-        return { class: 'bg-gray-500 text-white px-2 py-0.5 rounded-full text-xs font-medium', label: 'Unknown' };
-    }
-  };
-  
-  const statusDetails = getStatusDetails();
-  
-  return (
-    <span className={statusDetails.class}>
-      {statusDetails.label}
-    </span>
-  );
-};
-
-// Metric card component
-interface MetricCardProps {
-  title: string;
-  value: string;
-  desc: string;
-  positive: boolean;
-}
-
-const MetricCard: React.FC<MetricCardProps> = ({
-  title,
-  value,
-  desc,
-  positive
-}) => {
-  return (
-    <div className="bg-card/50 border border-border/50 rounded-md p-4">
-      <p className="text-sm font-medium">{title}</p>
-      <p className="text-2xl font-semibold mt-1">{value}</p>
-      <div className="flex items-center justify-between mt-2">
-        <p className="text-xs text-muted-foreground">{desc}</p>
-        <span className={`text-xs font-medium ${positive ? 'text-map-verified' : 'text-map-rejected'}`}>
-          {positive ? 'Good' : 'Warning'}
-        </span>
+      
+      <div className="glass-card p-5 animate-fade-in">
+        <div className="flex justify-between items-center mb-2">
+          <h3 className="text-lg font-medium">Active Today</h3>
+          <div className="h-10 w-10 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-500">
+            <UserCheck size={20} />
+          </div>
+        </div>
+        <p className="text-3xl font-bold">{adminStats.activeUsersToday}</p>
+        <p className="text-sm text-muted-foreground mt-1">
+          <span className="text-map-verified">+8%</span> from yesterday
+        </p>
+      </div>
+      
+      <div className="glass-card p-5 animate-fade-in">
+        <div className="flex justify-between items-center mb-2">
+          <h3 className="text-lg font-medium">Pending Locations</h3>
+          <div className="h-10 w-10 rounded-full bg-map-pending/10 flex items-center justify-center text-map-pending">
+            <MapPin size={20} />
+          </div>
+        </div>
+        <p className="text-3xl font-bold">{adminStats.pendingLocations}</p>
+        <p className="text-sm text-muted-foreground mt-1">
+          Awaiting moderation
+        </p>
+      </div>
+      
+      <div className="glass-card p-5 animate-fade-in">
+        <div className="flex justify-between items-center mb-2">
+          <h3 className="text-lg font-medium">Verified Locations</h3>
+          <div className="h-10 w-10 rounded-full bg-map-verified/10 flex items-center justify-center text-map-verified">
+            <CheckCircle size={20} />
+          </div>
+        </div>
+        <p className="text-3xl font-bold">{adminStats.verifiedLocations}</p>
+        <p className="text-sm text-muted-foreground mt-1">
+          <span className="text-map-verified">+42</span> in the last 7 days
+        </p>
+      </div>
+      
+      <div className="glass-card p-5 animate-fade-in">
+        <div className="flex justify-between items-center mb-2">
+          <h3 className="text-lg font-medium">Rejected Locations</h3>
+          <div className="h-10 w-10 rounded-full bg-map-rejected/10 flex items-center justify-center text-map-rejected">
+            <XCircle size={20} />
+          </div>
+        </div>
+        <p className="text-3xl font-bold">{adminStats.rejectedLocations}</p>
+        <p className="text-sm text-muted-foreground mt-1">
+          Didn't meet requirements
+        </p>
       </div>
     </div>
   );
