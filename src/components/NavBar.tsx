@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Sun, Moon, Menu, X, Map, MapPin, Upload, User, LogIn, LogOut, Settings, Shield } from 'lucide-react';
+import { Link, useLocation } from 'react-router-dom';
+import { Sun, Moon, Menu, X, Map, MapPin, Upload, User, LogIn, LogOut, Settings } from 'lucide-react';
 import { Button } from './ui/button';
 import {
   DropdownMenu,
@@ -14,36 +14,17 @@ import {
 // Mock authentication state - replace with actual auth state when implemented
 const useAuth = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false);
+  const login = () => setIsLoggedIn(true);
+  const logout = () => setIsLoggedIn(false);
   
-  // Check window object for auth status (demo only)
-  useEffect(() => {
-    setIsLoggedIn(window.isLoggedIn || false);
-  }, []);
-  
-  const login = (adminUser = false) => {
-    setIsLoggedIn(true);
-    if (adminUser) {
-      setIsAdmin(true);
-    }
-    window.isLoggedIn = true;
-  };
-  
-  const logout = () => {
-    setIsLoggedIn(false);
-    setIsAdmin(false);
-    window.isLoggedIn = false;
-  };
-  
-  return { isLoggedIn, isAdmin, login, logout };
+  return { isLoggedIn, login, logout };
 };
 
 const NavBar: React.FC = () => {
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
-  const navigate = useNavigate();
-  const { isLoggedIn, isAdmin, logout } = useAuth();
+  const { isLoggedIn, login, logout } = useAuth();
   
   // Initialize theme from localStorage or default to dark
   useEffect(() => {
@@ -68,12 +49,6 @@ const NavBar: React.FC = () => {
     localStorage.setItem('theme', newTheme);
   };
   
-  // Handle logout
-  const handleLogout = () => {
-    logout();
-    navigate('/');
-  };
-  
   // Navigation links with active state
   const navLinks = [
     { name: 'Explore', path: '/map', icon: <Map size={18} /> },
@@ -84,13 +59,13 @@ const NavBar: React.FC = () => {
   useEffect(() => {
     setIsMenuOpen(false);
   }, [location.pathname]);
-  
+
   // Handle protected route clicks
   const handleProtectedLink = (e: React.MouseEvent<HTMLAnchorElement>, path: string) => {
     if (!isLoggedIn) {
       e.preventDefault();
       // Redirect to login with return path
-      navigate(`/auth/login?returnTo=${path}`);
+      window.location.href = `/auth/login?returnTo=${path}`;
     }
   };
   
@@ -99,7 +74,7 @@ const NavBar: React.FC = () => {
       <div className="container flex h-16 items-center justify-between px-4">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2 transition-opacity hover:opacity-80">
-          <span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-xl font-bold text-transparent">
+          <span className="bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-xl font-bold text-transparent">
             Locus
           </span>
         </Link>
@@ -111,8 +86,8 @@ const NavBar: React.FC = () => {
               key={link.path}
               to={link.path}
               onClick={(e) => handleProtectedLink(e, link.path)}
-              className={`flex items-center gap-1.5 text-sm font-medium transition-colors hover:text-blue-400 ${
-                location.pathname === link.path ? 'text-blue-400' : 'text-muted-foreground'
+              className={`flex items-center gap-1.5 text-sm font-medium transition-colors hover:text-primary ${
+                location.pathname === link.path ? 'text-primary' : 'text-muted-foreground'
               }`}
             >
               {link.icon}
@@ -136,8 +111,8 @@ const NavBar: React.FC = () => {
           {isLoggedIn ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="rounded-full h-9 w-9 bg-blue-500/10">
-                  <User size={18} className="text-blue-400" />
+                <Button variant="ghost" size="icon" className="rounded-full h-9 w-9 bg-primary/10">
+                  <User size={18} className="text-primary" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48">
@@ -148,19 +123,11 @@ const NavBar: React.FC = () => {
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link to="/mapboard" className="flex items-center gap-2 cursor-pointer">
+                  <Link to="/dashboard" className="flex items-center gap-2 cursor-pointer">
                     <MapPin size={16} />
                     <span>My Contributions</span>
                   </Link>
                 </DropdownMenuItem>
-                {isAdmin && (
-                  <DropdownMenuItem asChild>
-                    <Link to="/admin" className="flex items-center gap-2 cursor-pointer">
-                      <Shield size={16} />
-                      <span>Admin Panel</span>
-                    </Link>
-                  </DropdownMenuItem>
-                )}
                 <DropdownMenuItem asChild>
                   <Link to="/settings" className="flex items-center gap-2 cursor-pointer">
                     <Settings size={16} />
@@ -168,14 +135,14 @@ const NavBar: React.FC = () => {
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={handleLogout} className="flex items-center gap-2 cursor-pointer text-destructive">
+                <DropdownMenuItem onClick={logout} className="flex items-center gap-2 cursor-pointer text-destructive">
                   <LogOut size={16} />
                   <span>Logout</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <Button asChild variant="default" size="sm" className="px-4 gap-1.5 bg-white text-black hover:bg-white/90">
+            <Button asChild variant="default" size="sm" className="px-4 gap-1.5">
               <Link to="/auth/login">
                 <LogIn size={16} />
                 <span>Sign In</span>
@@ -203,8 +170,8 @@ const NavBar: React.FC = () => {
                 key={link.path}
                 to={link.path}
                 onClick={(e) => handleProtectedLink(e, link.path)}
-                className={`flex items-center gap-2 p-4 text-sm font-medium transition-colors hover:text-blue-400 ${
-                  location.pathname === link.path ? 'text-blue-400' : 'text-muted-foreground'
+                className={`flex items-center gap-2 p-4 text-sm font-medium transition-colors hover:text-primary ${
+                  location.pathname === link.path ? 'text-primary' : 'text-muted-foreground'
                 }`}
               >
                 {link.icon}
@@ -213,21 +180,12 @@ const NavBar: React.FC = () => {
             ))}
             {!isLoggedIn && (
               <div className="p-4">
-                <Button asChild variant="default" className="w-full bg-white text-black hover:bg-white/90">
+                <Button asChild variant="default" className="w-full">
                   <Link to="/auth/login" className="flex items-center justify-center gap-1.5">
                     <LogIn size={16} />
                     Sign In
                   </Link>
                 </Button>
-                
-                <div className="mt-2">
-                  <Button asChild variant="outline" className="w-full">
-                    <Link to="/auth/login?admin=true" className="flex items-center justify-center gap-1.5">
-                      <Shield size={16} />
-                      Admin Login
-                    </Link>
-                  </Button>
-                </div>
               </div>
             )}
           </nav>

@@ -1,39 +1,34 @@
-
 import React, { useRef, useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { MapPin, Upload, Award, ArrowRight, Map, Globe, ChevronRight } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Link } from 'react-router-dom';
+import { MapPin, BarChart3, Users, Shield, ArrowRight, Map, Activity, Globe } from 'lucide-react';
 
 const Index = () => {
   const [isVisible, setIsVisible] = useState(false);
   const heroRef = useRef<HTMLDivElement>(null);
-  const navigate = useNavigate();
-  
-  // Mock authentication state - replace with actual auth
-  const isLoggedIn = window.isLoggedIn;
   
   // Animation on load
   useEffect(() => {
     setIsVisible(true);
   }, []);
   
-  // Top contributors data (mock data)
-  const topContributors = [
-    { rank: 1, username: 'mapmaster', points: 450 },
-    { rank: 2, username: 'geoguru', points: 392 },
-    { rank: 3, username: 'explorerzm', points: 341 },
-    { rank: 4, username: 'pathfinder', points: 289 },
-    { rank: 5, username: 'wayfarer', points: 276 },
-  ];
-  
-  // Handle authenticated routes
-  const handleAuthenticatedRoute = (path: string) => {
-    if (isLoggedIn) {
-      navigate(path);
-    } else {
-      navigate(`/auth/login?returnTo=${path}`);
+  // Features section
+  const features = [
+    {
+      icon: <MapPin className="h-8 w-8" />,
+      title: 'Crowdsourced Mapping',
+      description: 'Submit and verify locations across Africa, starting with Zambia and Lusaka.'
+    },
+    {
+      icon: <Activity className="h-8 w-8" />,
+      title: 'Gamified Experience',
+      description: 'Earn points, badges, and climb the leaderboard as you contribute to the map.'
+    },
+    {
+      icon: <Users className="h-8 w-8" />,
+      title: 'Community Verification',
+      description: 'Ensure data accuracy through community-driven verification process.'
     }
-  };
+  ];
   
   return (
     <div className="min-h-screen bg-background">
@@ -49,9 +44,9 @@ const Index = () => {
           {/* Gradient overlay */}
           <div className="absolute inset-0 bg-gradient-to-b from-background via-background/95 to-background/70 z-1"></div>
           
-          {/* Accent circles - changed to blue */}
-          <div className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full bg-blue-500/10 filter blur-[100px] animate-pulse-slow"></div>
-          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 rounded-full bg-blue-600/10 filter blur-[100px] animate-pulse-slow" style={{animationDelay: '1s'}}></div>
+          {/* Accent circles */}
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full bg-primary/10 filter blur-[100px] animate-pulse-slow"></div>
+          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 rounded-full bg-purple-500/10 filter blur-[100px] animate-pulse-slow" style={{animationDelay: '1s'}}></div>
         </div>
         
         <div className="container mx-auto relative z-10">
@@ -59,14 +54,14 @@ const Index = () => {
             {/* Logo with floating animation */}
             <div className={`animate-float ${isVisible ? 'opacity-100' : 'opacity-0'} transition-opacity duration-700 delay-100`}>
               <div className="relative flex items-center justify-center">
-                <Globe className="h-16 w-16 text-blue-400" />
-                <div className="absolute inset-0 bg-blue-400/20 rounded-full filter blur-xl"></div>
+                <Globe className="h-16 w-16 text-primary" />
+                <div className="absolute inset-0 bg-primary/20 rounded-full filter blur-xl"></div>
               </div>
             </div>
             
             {/* Tagline with gradient text */}
             <h1 className={`text-4xl md:text-6xl font-bold leading-tight tracking-tight bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent transition-all duration-700 delay-200 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-              The World, Flowing In <span className="bg-gradient-to-r from-blue-400 to-blue-500 bg-clip-text text-transparent">Real-Time</span>
+              The World, Flowing In <span className="bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent">Real-Time</span>
             </h1>
             
             {/* Description */}
@@ -77,19 +72,12 @@ const Index = () => {
             
             {/* CTA Buttons */}
             <div className={`flex flex-col sm:flex-row gap-4 mt-8 transition-all duration-700 delay-400 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-              <Button
-                onClick={() => handleAuthenticatedRoute('/contribute')}
-                className="px-8 py-3 bg-white text-black rounded-lg hover:bg-white/90 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_15px_rgba(255,255,255,0.1)]"
-              >
+              <Link to="/auth/signup" className="px-8 py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_15px_rgba(255,255,255,0.1)] backdrop-blur-sm">
                 Start Contributing
-              </Button>
-              <Button
-                onClick={() => handleAuthenticatedRoute('/map')}
-                variant="outline"
-                className="px-8 py-3 rounded-lg hover:bg-background/80 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_15px_rgba(255,255,255,0.05)]"
-              >
+              </Link>
+              <Link to="/map" className="px-8 py-3 bg-background border border-border/50 backdrop-blur-sm text-foreground rounded-lg hover:bg-background/80 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_15px_rgba(255,255,255,0.05)]">
                 Explore Map
-              </Button>
+              </Link>
             </div>
           </div>
           
@@ -104,123 +92,146 @@ const Index = () => {
             />
             
             <div className="absolute inset-0 flex items-center justify-center z-20">
-              <Button
-                onClick={() => handleAuthenticatedRoute('/map')}
-                className="px-6 py-3 bg-blue-500/90 backdrop-blur-sm text-white rounded-lg shadow-lg hover:bg-blue-500 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_15px_rgba(255,255,255,0.1)] group"
-              >
+              <Link to="/map" className="px-6 py-3 bg-primary/90 backdrop-blur-sm text-primary-foreground rounded-lg shadow-lg hover:bg-primary transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_15px_rgba(255,255,255,0.1)] group">
                 <span className="flex items-center">
                   Open Interactive Map 
                   <ArrowRight className="ml-2 h-4 w-4 transform transition-transform group-hover:translate-x-1" />
                 </span>
-              </Button>
+              </Link>
             </div>
           </div>
         </div>
       </div>
       
-      {/* How It Works Section */}
+      {/* Features Section */}
       <div className="py-20 px-6 bg-accent/30">
         <div className="container mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold">How It Works</h2>
+            <h2 className="text-3xl font-bold">How Locus Works</h2>
             <p className="text-muted-foreground mt-4 max-w-2xl mx-auto">
-              Be one of many contributors helping to build the most accurate map of Africa.
+              Contribute to mapping Africa through our intuitive, gamified platform
             </p>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {/* Add Locations */}
-            <div className="glass-card p-6 transform transition-all duration-700">
-              <div className="w-14 h-14 bg-blue-500/10 rounded-lg flex items-center justify-center text-blue-400 mb-5">
-                <MapPin className="h-8 w-8" />
+            {features.map((feature, i) => (
+              <div 
+                key={i} 
+                className="glass-card p-6 transform transition-all duration-700"
+                style={{ transitionDelay: `${i * 100 + 300}ms` }}
+              >
+                <div className="w-14 h-14 bg-primary/10 rounded-lg flex items-center justify-center text-primary mb-5">
+                  {feature.icon}
+                </div>
+                <h3 className="text-xl font-semibold mb-3">{feature.title}</h3>
+                <p className="text-muted-foreground">{feature.description}</p>
               </div>
-              <h3 className="text-xl font-semibold mb-3">Add Locations</h3>
-              <p className="text-muted-foreground">
-                Submit businesses, landmarks, and roads you know across Africa.
-              </p>
+            ))}
+          </div>
+        </div>
+      </div>
+      
+      {/* Section: How to Get Started */}
+      <div className="py-20 px-6">
+        <div className="container mx-auto">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-12">
+            <div className="md:w-1/2">
+              <h2 className="text-3xl font-bold mb-6">Get Started in 3 Simple Steps</h2>
+              
+              <div className="space-y-8">
+                <div className="flex gap-4">
+                  <div className="w-10 h-10 rounded-full bg-primary flex-shrink-0 flex items-center justify-center text-primary-foreground font-bold">
+                    1
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-semibold mb-2">Create an Account</h3>
+                    <p className="text-muted-foreground">Sign up to start contributing to the map and earning points.</p>
+                  </div>
+                </div>
+                
+                <div className="flex gap-4">
+                  <div className="w-10 h-10 rounded-full bg-primary flex-shrink-0 flex items-center justify-center text-primary-foreground font-bold">
+                    2
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-semibold mb-2">Add Locations</h3>
+                    <p className="text-muted-foreground">Submit businesses, roads, or landmarks to the map with details.</p>
+                  </div>
+                </div>
+                
+                <div className="flex gap-4">
+                  <div className="w-10 h-10 rounded-full bg-primary flex-shrink-0 flex items-center justify-center text-primary-foreground font-bold">
+                    3
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-semibold mb-2">Verify Others' Submissions</h3>
+                    <p className="text-muted-foreground">Help verify existing submissions to earn additional points.</p>
+                  </div>
+                </div>
+                
+                <div className="pt-4">
+                  <Link to="/dashboard" className="inline-flex items-center px-6 py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors">
+                    Start Mapping Now
+                    <ArrowRight className="ml-2 h-5 w-5" />
+                  </Link>
+                </div>
+              </div>
             </div>
             
-            {/* Upload Photos */}
-            <div className="glass-card p-6 transform transition-all duration-700" style={{ transitionDelay: '100ms' }}>
-              <div className="w-14 h-14 bg-blue-500/10 rounded-lg flex items-center justify-center text-blue-400 mb-5">
-                <Upload className="h-8 w-8" />
+            <div className="md:w-1/2 glass-card p-6 rounded-xl">
+              <div className="aspect-video rounded-lg overflow-hidden border border-border/50">
+                <img 
+                  src="https://api.mapbox.com/styles/v1/mapbox/light-v10/static/pin-l+0078FF(28.2833,-15.4167)/28.2833,-15.4167,12,0/1000x500?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw" 
+                  alt="Interactive mapping demo" 
+                  className="w-full h-full object-cover"
+                />
               </div>
-              <h3 className="text-xl font-semibold mb-3">Upload Photos</h3>
-              <p className="text-muted-foreground">
-                Add photos to help others identify and find the location.
-              </p>
-            </div>
-            
-            {/* Earn Rewards */}
-            <div className="glass-card p-6 transform transition-all duration-700" style={{ transitionDelay: '200ms' }}>
-              <div className="w-14 h-14 bg-blue-500/10 rounded-lg flex items-center justify-center text-blue-400 mb-5">
-                <Award className="h-8 w-8" />
+              <div className="grid grid-cols-3 gap-3 mt-4">
+                <div className="bg-card/50 border border-border/50 rounded-md p-3 text-center">
+                  <div className="text-2xl font-bold text-primary">50+</div>
+                  <div className="text-xs text-muted-foreground">Points per Submission</div>
+                </div>
+                <div className="bg-card/50 border border-border/50 rounded-md p-3 text-center">
+                  <div className="text-2xl font-bold text-primary">10+</div>
+                  <div className="text-xs text-muted-foreground">Points per Verification</div>
+                </div>
+                <div className="bg-card/50 border border-border/50 rounded-md p-3 text-center">
+                  <div className="text-2xl font-bold text-primary">15</div>
+                  <div className="text-xs text-muted-foreground">Badges to Earn</div>
+                </div>
               </div>
-              <h3 className="text-xl font-semibold mb-3">Earn Rewards</h3>
-              <p className="text-muted-foreground">
-                Get points and unlock rewards for your contributions.
-              </p>
             </div>
           </div>
         </div>
       </div>
       
-      {/* Top Contributors Section */}
-      <div className="py-20 px-6">
-        <div className="container mx-auto">
-          <div className="text-center mb-10">
-            <h2 className="text-3xl font-bold">Top Contributors</h2>
-            <p className="text-muted-foreground mt-4 max-w-2xl mx-auto">
-              The most active mappers in our community. Join them and earn your place on the leaderboard!
-            </p>
-          </div>
+      {/* CTA Section */}
+      <div className="py-20 px-6 bg-gradient-to-r from-primary/5 to-primary/10">
+        <div className="container mx-auto text-center">
+          <h2 className="text-3xl font-bold mb-6">Join the Locus Community</h2>
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8">
+            Help us create the most accurate and comprehensive map of Africa, starting with Zambia
+          </p>
           
-          <div className="max-w-lg mx-auto">
-            <div className="glass-card overflow-hidden rounded-xl">
-              <div className="p-4 border-b border-border/50 flex items-center justify-between">
-                <div className="flex items-center">
-                  <div className="bg-blue-500/10 p-2 rounded-lg">
-                    <Award className="h-5 w-5 text-blue-400" />
-                  </div>
-                  <h3 className="ml-3 font-semibold">Leaderboard</h3>
-                </div>
-                <Link to="/mapboard" className="flex items-center text-sm text-blue-400 hover:text-blue-300">
-                  View Full Rankings
-                  <ChevronRight className="ml-1 h-4 w-4" />
-                </Link>
-              </div>
-              
-              <div className="divide-y divide-border/50">
-                {topContributors.map((contributor) => (
-                  <div key={contributor.rank} className="flex items-center justify-between p-4 hover:bg-accent/20 transition-colors">
-                    <div className="flex items-center">
-                      <div className="w-8 h-8 rounded-full bg-accent/50 flex items-center justify-center font-semibold text-sm">
-                        {contributor.rank}
-                      </div>
-                      <div className="w-8 h-8 rounded-full bg-accent/30 flex items-center justify-center ml-3">
-                        <span className="text-sm">{contributor.username.charAt(0).toUpperCase()}</span>
-                      </div>
-                      <span className="ml-3 font-medium">{contributor.username}</span>
-                    </div>
-                    <div className="flex items-center text-sm">
-                      <span className="font-semibold text-blue-400">{contributor.points}</span>
-                      <span className="ml-1 text-muted-foreground">pts</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              
-              {!isLoggedIn && (
-                <div className="p-4 border-t border-border/50">
-                  <Button 
-                    onClick={() => navigate('/auth/login')} 
-                    className="w-full bg-blue-500 hover:bg-blue-600 text-white transition-colors"
-                  >
-                    Join Now to Start Contributing
-                  </Button>
-                </div>
-              )}
-            </div>
+          <div className="flex flex-col sm:flex-row justify-center gap-4">
+            <Link to="/map" className="px-6 py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors">
+              <span className="flex items-center justify-center">
+                <Map className="mr-2 h-5 w-5" />
+                Explore Map
+              </span>
+            </Link>
+            <Link to="/dashboard" className="px-6 py-3 bg-secondary text-secondary-foreground rounded-lg hover:bg-secondary/80 transition-colors">
+              <span className="flex items-center justify-center">
+                <BarChart3 className="mr-2 h-5 w-5" />
+                View Dashboard
+              </span>
+            </Link>
+            <Link to="/admin" className="px-6 py-3 bg-card text-card-foreground rounded-lg hover:bg-card/80 border border-border/50 transition-colors">
+              <span className="flex items-center justify-center">
+                <Shield className="mr-2 h-5 w-5" />
+                Admin Panel
+              </span>
+            </Link>
           </div>
         </div>
       </div>
@@ -230,7 +241,7 @@ const Index = () => {
         <div className="container mx-auto">
           <div className="text-center">
             <div className="mb-6">
-              <span className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-blue-500 bg-clip-text text-transparent">
+              <span className="text-2xl font-bold bg-gradient-to-r from-primary to-blue-500 bg-clip-text text-transparent">
                 Locus
               </span>
             </div>
@@ -248,3 +259,4 @@ const Index = () => {
 };
 
 export default Index;
+
