@@ -1,34 +1,18 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Layout from '@/components/Layout';
 import LoginForm from '@/components/Auth/LoginForm';
 import SignupForm from '@/components/Auth/SignupForm';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Login = () => {
-  const location = useLocation();
   const [activeTab, setActiveTab] = useState<string>("login");
   
   // Handle tab change
   const handleTabChange = (value: string) => {
     setActiveTab(value);
   };
-  
-  // Check for tab parameter in URL
-  useEffect(() => {
-    const searchParams = new URLSearchParams(location.search);
-    const tabParam = searchParams.get('tab');
-    if (tabParam === 'signup') {
-      setActiveTab('signup');
-    }
-    
-    // Store return path if provided
-    const returnTo = searchParams.get('returnTo');
-    if (returnTo) {
-      sessionStorage.setItem('returnTo', returnTo);
-    }
-  }, [location]);
   
   return (
     <Layout>
