@@ -3,8 +3,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
-import { useEffect } from "react";
+import { BrowserRouter, Routes, Route, Navigate, useLocation, useNavigate } from "react-router-dom";
+import { useEffect, ReactNode, useState } from "react";
 
 // Pages
 import Index from "./pages/Index";
@@ -23,16 +23,47 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
+// Mock authentication state - replace with actual auth state when implemented
+const useAuth = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const login = () => setIsLoggedIn(true);
+  const logout = () => setIsLoggedIn(false);
+  
+  return { isLoggedIn, login, logout };
+};
+
 // Route observer to handle tab query parameters
 const RouteObserver = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   
   useEffect(() => {
-    const tabParam = new URLSearchParams(location.search).get('tab');
-    // Handle tab param if needed
-  }, [location]);
+    // After successful login, check if there's a return path
+    const returnTo = sessionStorage.getItem('returnTo');
+    if (returnTo && location.pathname === '/auth/login' && window.isLoggedIn) {
+      sessionStorage.removeItem('returnTo');
+      navigate(returnTo);
+    }
+  }, [location, navigate]);
   
   return null;
+};
+
+// Protected route component
+interface ProtectedRouteProps {
+  children: ReactNode;
+}
+
+const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
+  const { isLoggedIn } = useAuth();
+  const location = useLocation();
+  
+  if (!isLoggedIn) {
+    // Redirect to login page with return URL
+    return <Navigate to={`/auth/login?returnTo=${location.pathname}`} replace />;
+  }
+  
+  return <>{children}</>;
 };
 
 const App = () => {
@@ -41,6 +72,10 @@ const App = () => {
     // Force dark mode regardless of user's system preference
     document.documentElement.classList.add('dark');
     localStorage.setItem('theme', 'dark');
+    
+    // For demo purposes - simulate authentication
+    // In a real app, this would come from a proper auth system
+    window.isLoggedIn = false;
   }, []);
   
   return (
@@ -53,21 +88,21 @@ const App = () => {
           <Routes>
             {/* Public Routes */}
             <Route path="/" element={<Index />} />
-            <Route path="/map" element={<Map />} />
             <Route path="/auth/login" element={<Login />} />
             <Route path="/auth/signup" element={<Signup />} />
             
-            {/* User Dashboard Routes */}
-            <Route path="/mapboard" element={<Mapboard />} />
-            <Route path="/mapboard/map" element={<DashboardMap />} />
-            <Route path="/contribute" element={<Contribute />} />
-            <Route path="/profile" element={<Profile />} />
+            {/* Protected Routes */}
+            <Route path="/map" element={<ProtectedRoute><Map /></ProtectedRoute>} />
+            <Route path="/contribute" element={<ProtectedRoute><Contribute /></ProtectedRoute>} />
+            <Route path="/mapboard" element={<ProtectedRoute><Mapboard /></ProtectedRoute>} />
+            <Route path="/mapboard/map" element={<ProtectedRoute><DashboardMap /></ProtectedRoute>} />
+            <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
             
             {/* Admin Routes */}
-            <Route path="/admin" element={<Admin />} />
-            <Route path="/admin/map" element={<AdminMap />} />
-            <Route path="/admin/users" element={<AdminUsers />} />
-            <Route path="/admin/submissions" element={<AdminSubmissions />} />
+            <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
+            <Route path="/admin/map" element={<ProtectedRoute><AdminMap /></ProtectedRoute>} />
+            <Route path="/admin/users" element={<ProtectedRoute><AdminUsers /></ProtectedRoute>} />
+            <Route path="/admin/submissions" element={<ProtectedRoute><AdminSubmissions /></ProtectedRoute>} />
             
             {/* Legacy routes - redirect to new names */}
             <Route path="/dashboard" element={<Navigate replace to="/mapboard" />} />
@@ -81,5 +116,12 @@ const App = () => {
     </QueryClientProvider>
   );
 };
+
+// Add isLoggedIn to window for demo purposes
+declare global {
+  interface Window {
+    isLoggedIn: boolean;
+  }
+}
 
 export default App;
