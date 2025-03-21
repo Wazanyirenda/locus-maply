@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import Layout from '@/components/Layout';
 import DashboardLayout from '@/components/Dashboard/DashboardLayout';
@@ -8,10 +7,9 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { MapPin, Building2, Route, Landmark, Camera, Upload } from 'lucide-react';
+import { MapPin, Building2, Route, Landmark, Camera, Upload, X } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 
-// Categories and subcategories
 interface CategoryOption {
   value: string;
   label: string;
@@ -74,7 +72,6 @@ const Contribute = () => {
     description: ''
   });
   
-  // Get available subcategories based on selected category
   const availableSubcategories = categories.find(cat => cat.value === formData.category)?.subcategories || [];
   
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -110,11 +107,8 @@ const Contribute = () => {
     setImages(images.filter((_, i) => i !== index));
   };
   
-  // Simulate map click to set location
   const handleMapClick = () => {
-    // In a real implementation, this would get coordinates from the map click
-    // For demo purposes, we'll use hardcoded coordinates
-    setSelectedLocation([-15.4167, 28.2833]); // Example coordinates for Lusaka
+    setSelectedLocation([-15.4167, 28.2833]);
     toast({
       title: "Location selected",
       description: "You've pinned a location on the map.",
@@ -137,14 +131,12 @@ const Contribute = () => {
     setIsLoading(true);
     
     try {
-      // This would send data to the backend in a real app
       console.log('Submitting contribution:', {
         ...formData,
         location: selectedLocation,
         images
       });
       
-      // Simulate API call delay
       await new Promise(resolve => setTimeout(resolve, 1500));
       
       toast({
@@ -153,7 +145,6 @@ const Contribute = () => {
         variant: "default",
       });
       
-      // Reset form
       setFormData({
         name: '',
         category: '',
@@ -191,7 +182,6 @@ const Contribute = () => {
           <h1 className="text-2xl font-bold">Submit a Landmark or Building</h1>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Map for location selection */}
             <Card className="md:order-2">
               <CardHeader>
                 <CardTitle className="text-lg">Pin the exact location on the map</CardTitle>
@@ -203,7 +193,6 @@ const Contribute = () => {
                       Interactive map would load here with Leaflet.js
                     </p>
                     
-                    {/* This is a placeholder for the map. In real implementation, this would be a Leaflet map */}
                     <Button onClick={handleMapClick} className="absolute z-10">
                       <MapPin className="mr-2 h-4 w-4" />
                       Click to Select Location
@@ -221,7 +210,6 @@ const Contribute = () => {
               </CardContent>
             </Card>
             
-            {/* Contribution form */}
             <div className="md:order-1">
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-2">
