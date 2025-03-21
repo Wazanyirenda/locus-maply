@@ -49,9 +49,9 @@ const Index = () => {
           {/* Gradient overlay */}
           <div className="absolute inset-0 bg-gradient-to-b from-background via-background/95 to-background/70 z-1"></div>
           
-          {/* Accent circles */}
+          {/* Accent circles - changed to blue */}
           <div className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full bg-blue-500/10 filter blur-[100px] animate-pulse-slow"></div>
-          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 rounded-full bg-cyan-500/10 filter blur-[100px] animate-pulse-slow" style={{animationDelay: '1s'}}></div>
+          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 rounded-full bg-blue-600/10 filter blur-[100px] animate-pulse-slow" style={{animationDelay: '1s'}}></div>
         </div>
         
         <div className="container mx-auto relative z-10">
@@ -66,7 +66,7 @@ const Index = () => {
             
             {/* Tagline with gradient text */}
             <h1 className={`text-4xl md:text-6xl font-bold leading-tight tracking-tight bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent transition-all duration-700 delay-200 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-              The World, Flowing In <span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">Real-Time</span>
+              The World, Flowing In <span className="bg-gradient-to-r from-blue-400 to-blue-500 bg-clip-text text-transparent">Real-Time</span>
             </h1>
             
             {/* Description */}
@@ -230,7 +230,7 @@ const Index = () => {
         <div className="container mx-auto">
           <div className="text-center">
             <div className="mb-6">
-              <span className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-cyan-500 bg-clip-text text-transparent">
+              <span className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-blue-500 bg-clip-text text-transparent">
                 Locus
               </span>
             </div>
