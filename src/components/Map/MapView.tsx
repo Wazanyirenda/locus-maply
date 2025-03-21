@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef } from 'react';
 import useMap, { MapFilters } from '@/hooks/useMap';
 import MapControls from './MapControls';
@@ -7,11 +8,13 @@ import LocationForm from '../LocationForm';
 interface MapViewProps {
   isAdminView?: boolean;
   isDashboardView?: boolean;
+  allowAddingLocations?: boolean;
 }
 
 const MapView: React.FC<MapViewProps> = ({ 
   isAdminView = false, 
-  isDashboardView = false 
+  isDashboardView = false,
+  allowAddingLocations = false
 }) => {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const {
@@ -44,8 +47,8 @@ const MapView: React.FC<MapViewProps> = ({
     if (!map) return;
     
     const handleMapClick = (e: L.LeafletMouseEvent) => {
-      // Only allow adding locations in standard view and dashboard view
-      if (!isAdminView) {
+      // Allow adding locations in standard view, dashboard view, or when explicitly allowed
+      if (!isAdminView || allowAddingLocations) {
         addLocation(e.latlng);
       }
     };
@@ -57,7 +60,7 @@ const MapView: React.FC<MapViewProps> = ({
     return () => {
       map.off('dblclick', handleMapClick);
     };
-  }, [map, addLocation, isAdminView]);
+  }, [map, addLocation, isAdminView, allowAddingLocations]);
   
   // Get view title
   const getViewTitle = () => {
@@ -79,7 +82,7 @@ const MapView: React.FC<MapViewProps> = ({
         <div className="absolute inset-0 flex items-center justify-center bg-background/80 backdrop-blur-sm z-50">
           <div className="flex flex-col items-center space-y-3">
             <div className="h-10 w-10 animate-rotate-center">
-              <Layers className="h-10 w-10 text-primary opacity-80" />
+              <Layers className="h-10 w-10 text-blue-400 opacity-80" />
             </div>
             <p className="text-sm font-medium text-muted-foreground">Loading map...</p>
           </div>
@@ -108,7 +111,7 @@ const MapView: React.FC<MapViewProps> = ({
       
       {/* Add New Location Button */}
       <button 
-        className="absolute bottom-6 right-6 flex items-center space-x-2 bg-primary text-primary-foreground px-4 py-2.5 rounded-full shadow-lg hover:bg-primary/90 transition-all z-10"
+        className="absolute bottom-6 right-6 flex items-center space-x-2 bg-blue-500 text-white px-4 py-2.5 rounded-full shadow-lg hover:bg-blue-600 transition-all z-10"
         onClick={() => {
           // If admin view, center on a random pending location
           if (isAdminView && locations.length > 0) {

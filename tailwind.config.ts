@@ -113,12 +113,12 @@ export default {
 				},
 				"glow": {
 					'0%, 100%': { 
-						boxShadow: '0 0 10px rgba(124, 58, 237, 0.5)',
-						borderColor: 'rgba(124, 58, 237, 0.2)'
+						boxShadow: '0 0 10px rgba(59, 130, 246, 0.5)',
+						borderColor: 'rgba(59, 130, 246, 0.2)'
 					},
 					'50%': { 
-						boxShadow: '0 0 20px rgba(124, 58, 237, 0.8)',
-						borderColor: 'rgba(124, 58, 237, 0.6)'
+						boxShadow: '0 0 20px rgba(59, 130, 246, 0.8)',
+						borderColor: 'rgba(59, 130, 246, 0.6)'
 					}
 				},
 			},

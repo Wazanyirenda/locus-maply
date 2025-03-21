@@ -3,12 +3,15 @@ import React, { useState, useEffect } from 'react';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Phone, Lock, Send, ArrowLeft } from 'lucide-react';
+import { Phone, Lock, Send, ArrowLeft, Shield } from 'lucide-react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useToast } from '@/components/ui/use-toast';
 
-const LoginForm: React.FC = () => {
+interface LoginFormProps {
+  isAdminLogin?: boolean;
+}
+
+const LoginForm: React.FC<LoginFormProps> = ({ isAdminLogin = false }) => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [searchParams] = useSearchParams();
@@ -94,20 +97,32 @@ const LoginForm: React.FC = () => {
       // Simulate API call delay
       await new Promise(resolve => setTimeout(resolve, 1500));
       
+      // Set authentication status in window object (for demo)
+      window.isLoggedIn = true;
+      
       // Successful login toast
       toast({
-        title: "Login successful!",
-        description: "Welcome back to Locus.",
+        title: isAdminLogin ? "Admin login successful!" : "Login successful!",
+        description: isAdminLogin 
+          ? "Welcome to the admin dashboard." 
+          : "Welcome back to Locus.",
         variant: "default",
       });
       
-      // Redirect to dashboard (mapboard)
-      navigate('/mapboard');
+      // Redirect based on login type
+      const returnTo = sessionStorage.getItem('returnTo');
+      if (returnTo) {
+        sessionStorage.removeItem('returnTo');
+        navigate(returnTo);
+      } else {
+        // Default redirect
+        navigate(isAdminLogin ? '/admin' : '/mapboard');
+      }
     } catch (error) {
       console.error('Login error:', error);
       toast({
         title: "Login failed",
-        description: "Invalid phone number or password. Please try again.",
+        description: "Invalid credentials. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -167,14 +182,24 @@ const LoginForm: React.FC = () => {
       // Simulate API call delay
       await new Promise(resolve => setTimeout(resolve, 1500));
       
+      // Set authentication status in window object (for demo)
+      window.isLoggedIn = true;
+      
       toast({
         title: "Verification successful!",
         description: "You have been logged in successfully.",
         variant: "default",
       });
       
-      // Redirect to dashboard (mapboard)
-      navigate('/mapboard');
+      // Redirect based on login type
+      const returnTo = sessionStorage.getItem('returnTo');
+      if (returnTo) {
+        sessionStorage.removeItem('returnTo');
+        navigate(returnTo);
+      } else {
+        // Admin login not allowed via OTP for extra security
+        navigate('/mapboard');
+      }
     } catch (error) {
       console.error('OTP verification error:', error);
       toast({
@@ -241,7 +266,7 @@ const LoginForm: React.FC = () => {
           
           <Button 
             onClick={handleVerifyOtp} 
-            className="w-full" 
+            className="w-full bg-blue-500 hover:bg-blue-600" 
             disabled={isSubmitting}
           >
             {isSubmitting ? 'Verifying...' : 'Verify and Continue'}
@@ -252,7 +277,7 @@ const LoginForm: React.FC = () => {
               Didn't receive a code?{' '}
               <Button 
                 variant="link" 
-                className="p-0 text-sm" 
+                className="p-0 text-sm text-blue-400 hover:text-blue-300" 
                 onClick={handleResendOtp}
                 disabled={isSubmitting}
               >
@@ -267,6 +292,18 @@ const LoginForm: React.FC = () => {
   
   return (
     <div className="p-6 animate-fade-in">
+      {isAdminLogin && (
+        <div className="mb-6 p-4 rounded-md bg-blue-500/10 border border-blue-500/20">
+          <div className="flex items-center">
+            <Shield className="h-5 w-5 text-blue-400 mr-2" />
+            <h3 className="font-medium">Admin Login</h3>
+          </div>
+          <p className="text-sm text-muted-foreground mt-1">
+            Please enter your administrator credentials to continue.
+          </p>
+        </div>
+      )}
+      
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-2">
           <Label htmlFor="phone">Phone number</Label>
@@ -287,14 +324,16 @@ const LoginForm: React.FC = () => {
         <div className="space-y-2">
           <div className="flex items-center justify-between">
             <Label htmlFor="password">Password</Label>
-            <Button 
-              variant="link" 
-              className="px-0 text-xs" 
-              type="button"
-              onClick={handleForgotPassword}
-            >
-              Forgot password?
-            </Button>
+            {!isAdminLogin && (
+              <Button 
+                variant="link" 
+                className="px-0 text-xs text-blue-400 hover:text-blue-300" 
+                type="button"
+                onClick={handleForgotPassword}
+              >
+                Forgot password?
+              </Button>
+            )}
           </div>
           <div className="relative">
             <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
@@ -314,36 +353,40 @@ const LoginForm: React.FC = () => {
         <div className="pt-2">
           <Button 
             type="submit" 
-            className="w-full transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_15px_rgba(255,255,255,0.1)]" 
+            className="w-full bg-blue-500 hover:bg-blue-600 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_15px_rgba(59,130,246,0.2)]" 
             disabled={isSubmitting}
           >
-            {isSubmitting ? 'Logging in...' : 'Sign In'}
+            {isSubmitting ? 'Logging in...' : isAdminLogin ? 'Admin Sign In' : 'Sign In'}
           </Button>
         </div>
       </form>
       
-      <div className="relative mt-6">
-        <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-border"></div>
-        </div>
-        <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-card px-2 text-muted-foreground backdrop-blur-sm">
-            Or use OTP
-          </span>
-        </div>
-      </div>
-      
-      <div className="mt-6">
-        <Button 
-          onClick={handleSendOtp} 
-          variant="outline" 
-          className="w-full transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_10px_rgba(255,255,255,0.05)]"
-          disabled={isSubmitting}
-        >
-          <Send className="mr-2 h-4 w-4" />
-          {isSubmitting ? 'Sending Code...' : 'Send Verification Code'}
-        </Button>
-      </div>
+      {!isAdminLogin && (
+        <>
+          <div className="relative mt-6">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-border"></div>
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-card px-2 text-muted-foreground backdrop-blur-sm">
+                Or use OTP
+              </span>
+            </div>
+          </div>
+          
+          <div className="mt-6">
+            <Button 
+              onClick={handleSendOtp} 
+              variant="outline" 
+              className="w-full transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_10px_rgba(255,255,255,0.05)]"
+              disabled={isSubmitting}
+            >
+              <Send className="mr-2 h-4 w-4" />
+              {isSubmitting ? 'Sending Code...' : 'Send Verification Code'}
+            </Button>
+          </div>
+        </>
+      )}
     </div>
   );
 };

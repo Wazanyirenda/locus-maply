@@ -26,16 +26,30 @@ const queryClient = new QueryClient();
 // Mock authentication state - replace with actual auth state when implemented
 const useAuth = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const login = () => setIsLoggedIn(true);
-  const logout = () => setIsLoggedIn(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   
-  return { isLoggedIn, login, logout };
+  const login = (isAdminUser = false) => {
+    setIsLoggedIn(true);
+    if (isAdminUser) {
+      setIsAdmin(true);
+    }
+    window.isLoggedIn = true;
+  };
+  
+  const logout = () => {
+    setIsLoggedIn(false);
+    setIsAdmin(false);
+    window.isLoggedIn = false;
+  };
+  
+  return { isLoggedIn, isAdmin, login, logout };
 };
 
 // Route observer to handle tab query parameters
 const RouteObserver = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { isLoggedIn, isAdmin } = useAuth();
   
   useEffect(() => {
     // After successful login, check if there's a return path
@@ -49,7 +63,7 @@ const RouteObserver = () => {
   return null;
 };
 
-// Protected route component
+// Protected route component for regular users
 interface ProtectedRouteProps {
   children: ReactNode;
 }
@@ -61,6 +75,28 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   if (!isLoggedIn) {
     // Redirect to login page with return URL
     return <Navigate to={`/auth/login?returnTo=${location.pathname}`} replace />;
+  }
+  
+  return <>{children}</>;
+};
+
+// Admin route component
+interface AdminRouteProps {
+  children: ReactNode;
+}
+
+const AdminRoute = ({ children }: AdminRouteProps) => {
+  const { isLoggedIn, isAdmin } = useAuth();
+  const location = useLocation();
+  
+  if (!isLoggedIn) {
+    // Redirect to login page with return URL
+    return <Navigate to={`/auth/login?returnTo=${location.pathname}&admin=true`} replace />;
+  }
+  
+  if (!isAdmin) {
+    // User is logged in but not an admin
+    return <Navigate to="/mapboard" replace />;
   }
   
   return <>{children}</>;
@@ -91,18 +127,18 @@ const App = () => {
             <Route path="/auth/login" element={<Login />} />
             <Route path="/auth/signup" element={<Signup />} />
             
-            {/* Protected Routes */}
+            {/* Protected Routes (require login) */}
             <Route path="/map" element={<ProtectedRoute><Map /></ProtectedRoute>} />
             <Route path="/contribute" element={<ProtectedRoute><Contribute /></ProtectedRoute>} />
             <Route path="/mapboard" element={<ProtectedRoute><Mapboard /></ProtectedRoute>} />
             <Route path="/mapboard/map" element={<ProtectedRoute><DashboardMap /></ProtectedRoute>} />
             <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
             
-            {/* Admin Routes */}
-            <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
-            <Route path="/admin/map" element={<ProtectedRoute><AdminMap /></ProtectedRoute>} />
-            <Route path="/admin/users" element={<ProtectedRoute><AdminUsers /></ProtectedRoute>} />
-            <Route path="/admin/submissions" element={<ProtectedRoute><AdminSubmissions /></ProtectedRoute>} />
+            {/* Admin Routes (require admin login) */}
+            <Route path="/admin" element={<AdminRoute><Admin /></AdminRoute>} />
+            <Route path="/admin/map" element={<AdminRoute><AdminMap /></AdminRoute>} />
+            <Route path="/admin/users" element={<AdminRoute><AdminUsers /></AdminRoute>} />
+            <Route path="/admin/submissions" element={<AdminRoute><AdminSubmissions /></AdminRoute>} />
             
             {/* Legacy routes - redirect to new names */}
             <Route path="/dashboard" element={<Navigate replace to="/mapboard" />} />
