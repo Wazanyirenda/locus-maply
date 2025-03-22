@@ -59,8 +59,8 @@ const LoginForm: React.FC = () => {
       // This would connect to a real backend API in production
       console.log('Logging in with:', formData);
       
-      // Simulate API call delay - reduced to make it faster
-      await new Promise(resolve => setTimeout(resolve, 500));
+      // Simulate API call delay - make it even faster for testing
+      await new Promise(resolve => setTimeout(resolve, 300));
       
       // Store user info in localStorage
       const user = {
@@ -79,8 +79,10 @@ const LoginForm: React.FC = () => {
         variant: "default",
       });
       
-      // Immediately redirect to dashboard (mapboard)
-      navigate('/mapboard');
+      // Force redirect to dashboard (mapboard)
+      setTimeout(() => {
+        navigate('/mapboard');
+      }, 100);
     } catch (error) {
       console.error('Login error:', error);
       toast({
@@ -98,6 +100,14 @@ const LoginForm: React.FC = () => {
       title: "Password Reset",
       description: "A one-time password (OTP) has been sent to your phone number.",
       variant: "default",
+    });
+  };
+  
+  // For demo, let's prefill the login form to make testing easier
+  const fillDemoCredentials = () => {
+    setFormData({
+      phone: '+260123456789',
+      password: 'password123'
     });
   };
   
@@ -158,6 +168,18 @@ const LoginForm: React.FC = () => {
           <div className="pt-2">
             <Button type="submit" className="w-full" disabled={isSubmitting}>
               {isSubmitting ? 'Logging in...' : 'Login'}
+            </Button>
+          </div>
+          
+          <div className="text-center">
+            <Button 
+              type="button" 
+              variant="outline" 
+              size="sm" 
+              onClick={fillDemoCredentials}
+              className="text-xs mt-2"
+            >
+              Use Demo Account
             </Button>
           </div>
         </form>

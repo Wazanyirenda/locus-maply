@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -117,6 +116,11 @@
   }
 }
 
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
 @layer components {
   .glass-card {
     @apply bg-card/80 backdrop-blur-md border border-border/50 rounded-lg shadow-sm transition-all;
@@ -138,7 +142,10 @@
     @apply w-full px-3 py-2 rounded-md border border-input bg-background focus:outline-none focus:ring-2 focus:ring-ring focus:border-input;
   }
   
-  /* Map-specific styles */
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+  
   .map-container {
     @apply h-full w-full z-0 rounded-lg overflow-hidden;
   }
@@ -147,7 +154,6 @@
     @apply glass-panel p-3 absolute z-10 right-4 top-4 space-y-2;
   }
   
-  /* Status indicators */
   .status-verified {
     @apply bg-map-verified text-white px-2 py-0.5 rounded-full text-xs font-medium;
   }
@@ -160,7 +166,6 @@
     @apply bg-map-rejected text-white px-2 py-0.5 rounded-full text-xs font-medium;
   }
   
-  /* Tooltip styles */
   .tooltip {
     @apply absolute z-50 glass-panel px-2 py-1 text-xs pointer-events-none opacity-0 transition-opacity;
   }
@@ -169,7 +174,6 @@
     @apply opacity-100;
   }
   
-  /* Animations */
   .page-transition-enter {
     @apply opacity-0;
   }
@@ -187,7 +191,6 @@
   }
 }
 
-/* Leaflet specific styles */
 .leaflet-container {
   @apply h-full w-full;
 }
