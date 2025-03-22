@@ -1,12 +1,15 @@
 
 import React, { useEffect, useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Sun, Moon, Menu, X, Map, User, BarChart3, LogIn } from 'lucide-react';
+import { Button } from './ui/button';
 
 const NavBar: React.FC = () => {
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
   
   // Initialize theme from localStorage or default to dark
   useEffect(() => {
@@ -21,6 +24,10 @@ const NavBar: React.FC = () => {
       setTheme('dark');
       document.documentElement.classList.add('dark');
     }
+    
+    // Check if user is logged in - this would be replaced with proper auth check
+    const userLoggedIn = localStorage.getItem('user') !== null;
+    setIsLoggedIn(userLoggedIn);
   }, []);
   
   // Toggle theme function
@@ -34,10 +41,18 @@ const NavBar: React.FC = () => {
   // Navigation links with active state
   const navLinks = [
     { name: 'Home', path: '/', icon: <User size={18} /> },
-    { name: 'Map', path: '/map', icon: <Map size={18} /> },
-    { name: 'Dashboard', path: '/dashboard', icon: <BarChart3 size={18} /> },
-    { name: 'Admin', path: '/admin', icon: <BarChart3 size={18} /> },
   ];
+  
+  // Navigation links that require auth
+  const authLinks = [
+    { name: 'Map', path: '/map', icon: <Map size={18} /> },
+    { name: 'Dashboard', path: '/mapboard', icon: <BarChart3 size={18} /> },
+  ];
+  
+  // Handle login
+  const handleLogin = () => {
+    navigate('/auth/login');
+  };
   
   // Close menu when changing routes
   useEffect(() => {
@@ -68,6 +83,19 @@ const NavBar: React.FC = () => {
               {link.name}
             </Link>
           ))}
+          
+          {isLoggedIn && authLinks.map((link) => (
+            <Link
+              key={link.path}
+              to={link.path}
+              className={`flex items-center gap-1.5 text-sm font-medium transition-colors hover:text-primary ${
+                location.pathname === link.path ? 'text-primary' : 'text-muted-foreground'
+              }`}
+            >
+              {link.icon}
+              {link.name}
+            </Link>
+          ))}
         </nav>
         
         {/* Actions */}
@@ -81,11 +109,22 @@ const NavBar: React.FC = () => {
             {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
           </button>
           
-          {/* Login Button - Would connect to authentication in a real app */}
-          <button className="hidden md:flex items-center gap-1.5 rounded-full bg-primary px-3.5 py-1.5 text-xs font-medium text-primary-foreground transition-colors hover:bg-primary/90">
-            <LogIn size={14} />
-            Login
-          </button>
+          {/* Login Button or User Profile */}
+          {!isLoggedIn ? (
+            <Button className="hidden md:flex items-center gap-1.5" onClick={handleLogin}>
+              <LogIn size={16} />
+              Login
+            </Button>
+          ) : (
+            <Link to="/profile" className="hidden md:block">
+              <div className="flex items-center gap-2">
+                <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center">
+                  <User size={16} className="text-primary" />
+                </div>
+                <span className="text-sm font-medium">Profile</span>
+              </div>
+            </Link>
+          )}
           
           {/* Mobile Menu Toggle */}
           <button
@@ -114,11 +153,34 @@ const NavBar: React.FC = () => {
                 {link.name}
               </Link>
             ))}
+            
+            {isLoggedIn && authLinks.map((link) => (
+              <Link
+                key={link.path}
+                to={link.path}
+                className={`flex items-center gap-2 p-4 text-sm font-medium transition-colors hover:text-primary ${
+                  location.pathname === link.path ? 'text-primary' : 'text-muted-foreground'
+                }`}
+              >
+                {link.icon}
+                {link.name}
+              </Link>
+            ))}
+            
             <div className="p-4">
-              <button className="w-full flex items-center justify-center gap-1.5 rounded-full bg-primary px-3.5 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90">
-                <LogIn size={16} />
-                Login
-              </button>
+              {!isLoggedIn ? (
+                <Button className="w-full flex items-center justify-center gap-1.5" onClick={handleLogin}>
+                  <LogIn size={16} />
+                  Login
+                </Button>
+              ) : (
+                <Link to="/profile" className="block">
+                  <Button variant="outline" className="w-full flex items-center justify-center gap-1.5">
+                    <User size={16} />
+                    Profile
+                  </Button>
+                </Link>
+              )}
             </div>
           </nav>
         </div>

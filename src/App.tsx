@@ -4,17 +4,13 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 // Pages
 import Index from "./pages/Index";
 import Map from "./pages/Map";
 import Mapboard from "./pages/Mapboard";
 import DashboardMap from "./pages/DashboardMap";
-import Admin from "./pages/Admin";
-import AdminMap from "./pages/AdminMap";
-import AdminUsers from "./pages/admin/AdminUsers";
-import AdminSubmissions from "./pages/admin/AdminSubmissions";
 import Login from "./pages/auth/Login";
 import Signup from "./pages/auth/Signup";
 import Contribute from "./pages/Contribute";
@@ -22,6 +18,23 @@ import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
+
+// Simple auth check component
+const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  
+  useEffect(() => {
+    // This would be replaced with a proper auth check
+    const user = localStorage.getItem('user');
+    setIsLoggedIn(user !== null);
+  }, []);
+  
+  if (!isLoggedIn) {
+    return <Navigate to="/auth/login" />;
+  }
+  
+  return <>{children}</>;
+};
 
 const App = () => {
   // Set dark mode as default on initial load
@@ -48,21 +61,15 @@ const App = () => {
           <Routes>
             {/* Public Routes */}
             <Route path="/" element={<Index />} />
-            <Route path="/map" element={<Map />} />
             <Route path="/auth/login" element={<Login />} />
             <Route path="/auth/signup" element={<Signup />} />
             
-            {/* User Dashboard Routes */}
-            <Route path="/mapboard" element={<Mapboard />} />
-            <Route path="/mapboard/map" element={<DashboardMap />} />
-            <Route path="/contribute" element={<Contribute />} />
-            <Route path="/profile" element={<Profile />} />
-            
-            {/* Admin Routes */}
-            <Route path="/admin" element={<Admin />} />
-            <Route path="/admin/map" element={<AdminMap />} />
-            <Route path="/admin/users" element={<AdminUsers />} />
-            <Route path="/admin/submissions" element={<AdminSubmissions />} />
+            {/* Protected Routes */}
+            <Route path="/map" element={<ProtectedRoute><Map /></ProtectedRoute>} />
+            <Route path="/mapboard" element={<ProtectedRoute><Mapboard /></ProtectedRoute>} />
+            <Route path="/mapboard/map" element={<ProtectedRoute><DashboardMap /></ProtectedRoute>} />
+            <Route path="/contribute" element={<ProtectedRoute><Contribute /></ProtectedRoute>} />
+            <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
             
             {/* Legacy routes - redirect to new names */}
             <Route path="/dashboard" element={<Navigate replace to="/mapboard" />} />

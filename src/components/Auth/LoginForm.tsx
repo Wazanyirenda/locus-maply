@@ -63,6 +63,16 @@ const LoginForm: React.FC = () => {
       // Simulate API call delay
       await new Promise(resolve => setTimeout(resolve, 1500));
       
+      // Store user info in localStorage
+      const user = {
+        id: '123456',
+        phone: formData.phone,
+        name: 'Demo User',
+        role: 'user'
+      };
+      
+      localStorage.setItem('user', JSON.stringify(user));
+      
       // Successful login toast
       toast({
         title: "Login successful!",
