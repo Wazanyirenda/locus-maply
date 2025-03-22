@@ -57,11 +57,10 @@ const LoginForm: React.FC = () => {
     
     try {
       // This would connect to a real backend API in production
-      // For demo purposes, we'll simulate a successful login
       console.log('Logging in with:', formData);
       
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      // Simulate API call delay - reduced to make it faster
+      await new Promise(resolve => setTimeout(resolve, 500));
       
       // Store user info in localStorage
       const user = {
@@ -80,7 +79,7 @@ const LoginForm: React.FC = () => {
         variant: "default",
       });
       
-      // Redirect to dashboard (mapboard)
+      // Immediately redirect to dashboard (mapboard)
       navigate('/mapboard');
     } catch (error) {
       console.error('Login error:', error);
