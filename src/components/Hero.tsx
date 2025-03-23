@@ -2,31 +2,18 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Link, useNavigate } from "react-router-dom";
-import { Globe2, Sun, Moon } from "lucide-react";
+import { Globe2 } from "lucide-react";
 import { useTheme } from "@/hooks/useTheme";
 
 const Hero = () => {
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const isLoggedIn = localStorage.getItem('user') !== null;
-
-  // Create a theme hook
-  const [theme, setTheme] = useState(() => {
-    const savedTheme = localStorage.getItem('theme') as 'dark' | 'light' | null;
-    return savedTheme || 'dark';
-  });
+  const { theme, setTheme } = useTheme();
 
   const toggleTheme = () => {
-    const newTheme = theme === 'dark' ? 'light' : 'dark';
-    setTheme(newTheme);
-    document.documentElement.classList.toggle('dark', newTheme === 'dark');
-    localStorage.setItem('theme', newTheme);
+    setTheme(theme === 'dark' ? 'light' : 'dark');
   };
-
-  // Initialize theme
-  React.useEffect(() => {
-    document.documentElement.classList.toggle('dark', theme === 'dark');
-  }, []);
 
   const handleExploreClick = () => {
     // Navigate to login if not logged in, otherwise to map
@@ -48,15 +35,6 @@ const Hero = () => {
               <Globe2 className="h-8 w-8 text-primary" />
               <span className="text-xl font-bold">Locus</span>
             </Link>
-            
-            {/* Theme Toggle Button */}
-            <button
-              onClick={toggleTheme}
-              className="rounded-full p-2 text-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
-              aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`}
-            >
-              {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
-            </button>
             
             {/* Login/Dashboard Button */}
             <div>
