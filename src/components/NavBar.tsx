@@ -9,9 +9,8 @@ import {
   LogIn, 
   LogOut, 
   Map, 
-  User, 
-  Globe,
-  Plus
+  User,
+  Globe 
 } from 'lucide-react';
 import { Button } from './ui/button';
 import { useTheme } from '@/hooks/useTheme';
@@ -27,7 +26,7 @@ const NavBar: React.FC = () => {
   useEffect(() => {
     const userLoggedIn = localStorage.getItem('user') !== null;
     setIsLoggedIn(userLoggedIn);
-  }, [location]);
+  }, [location.pathname]);
   
   // Toggle theme function
   const toggleTheme = () => {
@@ -57,6 +56,7 @@ const NavBar: React.FC = () => {
         <div className="flex items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 transition-opacity hover:opacity-80">
+            <Globe className="h-6 w-6 text-primary" />
             <span className="bg-gradient-to-r from-primary to-blue-500 bg-clip-text text-xl font-bold text-transparent">
               Locus
             </span>
@@ -65,7 +65,7 @@ const NavBar: React.FC = () => {
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-6">
             <Link 
-              to={isLoggedIn ? "/explore" : "/auth/login"} 
+              to="/explore" 
               className="text-sm hover:text-primary transition-colors"
             >
               Explore
@@ -132,7 +132,7 @@ const NavBar: React.FC = () => {
           <div className="absolute top-full left-0 right-0 mt-2 p-4 bg-background/90 backdrop-blur-md border border-border/40 rounded-lg animate-fade-in">
             <div className="flex flex-col space-y-4">
               <Link 
-                to={isLoggedIn ? "/explore" : "/auth/login"} 
+                to="/explore" 
                 className="text-sm hover:text-primary transition-colors"
               >
                 Explore

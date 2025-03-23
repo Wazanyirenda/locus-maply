@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React from "react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { Globe2 } from "lucide-react";
@@ -7,7 +7,6 @@ import { useTheme } from "@/hooks/useTheme";
 
 const Hero = () => {
   const navigate = useNavigate();
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const isLoggedIn = localStorage.getItem('user') !== null;
   const { theme, setTheme } = useTheme();
 
@@ -16,8 +15,7 @@ const Hero = () => {
   };
 
   const handleExploreClick = () => {
-    // Navigate to login if not logged in, otherwise to explore
-    isLoggedIn ? navigate('/explore') : navigate('/auth/login');
+    navigate('/explore');
   };
 
   const handleContributeClick = () => {

@@ -13,8 +13,8 @@ const LoginForm: React.FC = () => {
   const { toast } = useToast();
   
   const [formData, setFormData] = useState({
-    phone: '',
-    password: ''
+    phone: '+260123456789',
+    password: 'password123'
   });
   
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -32,7 +32,7 @@ const LoginForm: React.FC = () => {
       // Store user info in localStorage - simple bypass for authentication
       const user = {
         id: '123456',
-        phone: formData.phone || '+260123456789', // Use entered phone or default
+        phone: formData.phone,
         name: 'Demo User',
         role: 'user'
       };
@@ -60,12 +60,24 @@ const LoginForm: React.FC = () => {
     }
   };
   
-  // For demo, let's prefill the login form to make testing easier
-  const fillDemoCredentials = () => {
-    setFormData({
+  const handleQuickLogin = () => {
+    // Quick login for demo purposes
+    const user = {
+      id: '123456',
       phone: '+260123456789',
-      password: 'password123'
+      name: 'Demo User',
+      role: 'user'
+    };
+    
+    localStorage.setItem('user', JSON.stringify(user));
+    
+    toast({
+      title: "Demo login successful!",
+      description: "You've been logged in as a demo user.",
+      variant: "default",
     });
+    
+    navigate('/mapboard');
   };
   
   return (
@@ -73,7 +85,7 @@ const LoginForm: React.FC = () => {
       <CardHeader>
         <CardTitle className="text-2xl">Login to Locus</CardTitle>
         <CardDescription>
-          Enter any credentials to access the demo
+          Enter credentials or use the demo login
         </CardDescription>
       </CardHeader>
       
@@ -125,16 +137,19 @@ const LoginForm: React.FC = () => {
             </Button>
           </div>
           
-          <div className="text-center">
+          <div className="text-center mt-4">
             <Button 
               type="button" 
-              variant="outline" 
-              size="sm" 
-              onClick={fillDemoCredentials}
-              className="text-xs mt-2"
+              variant="secondary" 
+              size="lg" 
+              className="w-full"
+              onClick={handleQuickLogin}
             >
-              Use Demo Account
+              Quick Demo Login
             </Button>
+            <p className="text-xs text-muted-foreground mt-2">
+              One-click login for demonstration purposes
+            </p>
           </div>
         </form>
       </CardContent>

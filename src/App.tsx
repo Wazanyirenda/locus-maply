@@ -24,12 +24,19 @@ const queryClient = new QueryClient();
 // Simple auth check component
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [loading, setLoading] = useState(true);
   
   useEffect(() => {
     // Check if user exists in localStorage
     const user = localStorage.getItem('user');
     setIsLoggedIn(user !== null);
+    setLoading(false);
   }, []);
+  
+  if (loading) {
+    // Optional: Show a loading spinner here
+    return <div className="flex items-center justify-center h-screen">Loading...</div>;
+  }
   
   if (!isLoggedIn) {
     return <Navigate to="/auth/login" />;
