@@ -16,42 +16,17 @@ const Hero = () => {
   };
 
   const handleExploreClick = () => {
-    // Navigate to login if not logged in, otherwise to map
-    isLoggedIn ? navigate('/mapboard') : navigate('/auth/login');
+    // Navigate to login if not logged in, otherwise to explore
+    isLoggedIn ? navigate('/map') : navigate('/auth/login');
   };
 
   const handleContributeClick = () => {
     // Navigate to login if not logged in, otherwise to contribution page
-    isLoggedIn ? navigate('/mapboard') : navigate('/auth/login');
+    isLoggedIn ? navigate('/contribute') : navigate('/auth/login');
   };
 
   return (
     <div className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden">
-      {/* Navigation Bar */}
-      <div className="w-full absolute top-0 z-20">
-        <div className="container mx-auto px-4 py-5">
-          <div className="flex items-center justify-between">
-            <Link to="/" className="flex items-center gap-2">
-              <Globe2 className="h-8 w-8 text-primary" />
-              <span className="text-xl font-bold">Locus</span>
-            </Link>
-            
-            {/* Login/Dashboard Button */}
-            <div>
-              {isLoggedIn ? (
-                <Button asChild>
-                  <Link to="/mapboard">Dashboard</Link>
-                </Button>
-              ) : (
-                <Button asChild>
-                  <Link to="/auth/login">Login</Link>
-                </Button>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
-
       {/* Background grid effect */}
       <div className="absolute inset-0 z-0 opacity-20">
         <div className="absolute inset-0 bg-gradient-to-b from-background/50 to-background" />

@@ -34,14 +34,13 @@ const LoginForm: React.FC = () => {
   };
   
   const validateForm = (): boolean => {
+    // For now, we're bypassing authentication, so we'll just ensure fields aren't completely empty
     const newErrors: {
       phone?: string;
       password?: string;
     } = {};
     
     if (!formData.phone) newErrors.phone = 'Phone number is required';
-    else if (!/^\+?[0-9]{10,15}$/.test(formData.phone)) newErrors.phone = 'Invalid phone number format';
-    
     if (!formData.password) newErrors.password = 'Password is required';
     
     setErrors(newErrors);
@@ -51,21 +50,16 @@ const LoginForm: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!validateForm()) return;
+    // For now, bypass the validation completely for the demo
+    // We'll just store some demo user info in localStorage
     
     setIsSubmitting(true);
     
     try {
-      // This would connect to a real backend API in production
-      console.log('Logging in with:', formData);
-      
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 300));
-      
-      // Store user info in localStorage
+      // Store user info in localStorage - simple bypass for authentication
       const user = {
         id: '123456',
-        phone: formData.phone,
+        phone: formData.phone || '+260123456789', // Use entered phone or default
         name: 'Demo User',
         role: 'user'
       };
@@ -75,17 +69,17 @@ const LoginForm: React.FC = () => {
       // Successful login toast
       toast({
         title: "Login successful!",
-        description: "Welcome back to Locus.",
+        description: "Welcome to Locus. You've been automatically logged in.",
         variant: "default",
       });
       
-      // Force redirect to dashboard
+      // Redirect to dashboard/mapboard
       navigate('/mapboard');
     } catch (error) {
       console.error('Login error:', error);
       toast({
-        title: "Login failed",
-        description: "Invalid phone number or password. Please try again.",
+        title: "Something went wrong",
+        description: "An unexpected error occurred. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -114,7 +108,7 @@ const LoginForm: React.FC = () => {
       <CardHeader>
         <CardTitle className="text-2xl">Login to Locus</CardTitle>
         <CardDescription>
-          Enter your credentials to access your account
+          Enter any credentials to access the demo
         </CardDescription>
       </CardHeader>
       
@@ -165,7 +159,7 @@ const LoginForm: React.FC = () => {
           
           <div className="pt-2">
             <Button type="submit" className="w-full" disabled={isSubmitting}>
-              {isSubmitting ? 'Logging in...' : 'Login'}
+              {isSubmitting ? 'Logging in...' : 'Sign In'}
             </Button>
           </div>
           

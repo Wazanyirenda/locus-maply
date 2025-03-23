@@ -1,14 +1,37 @@
 
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Sun, Moon, Menu, X, Map, User, BarChart3, LogIn } from 'lucide-react';
+import { 
+  Sun, 
+  Moon, 
+  Menu, 
+  X, 
+  LogIn, 
+  LogOut, 
+  Map, 
+  User, 
+  Settings, 
+  ChevronDown, 
+  ChevronUp, 
+  Globe,
+  Plus
+} from 'lucide-react';
 import { Button } from './ui/button';
 import { useTheme } from '@/hooks/useTheme';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const NavBar: React.FC = () => {
   const { theme, setTheme } = useTheme();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
   
@@ -16,22 +39,36 @@ const NavBar: React.FC = () => {
   useEffect(() => {
     const userLoggedIn = localStorage.getItem('user') !== null;
     setIsLoggedIn(userLoggedIn);
-  }, []);
+  }, [location]);
   
   // Toggle theme function
   const toggleTheme = () => {
     setTheme(theme === 'dark' ? 'light' : 'dark');
   };
   
+  // Guest navigation links
+  const guestLinks = [
+    { name: 'Explore', path: '/auth/login', icon: <Globe size={18} /> },
+    { name: 'Contribute', path: '/auth/login', icon: <Plus size={18} /> },
+  ];
+  
   // Navigation links for logged in users
   const authLinks = [
-    { name: 'Map', path: '/map', icon: <Map size={18} /> },
-    { name: 'Dashboard', path: '/mapboard', icon: <BarChart3 size={18} /> },
+    { name: 'Explore', path: '/map', icon: <Globe size={18} /> },
+    { name: 'Contribute', path: '/contribute', icon: <Plus size={18} /> },
+    { name: 'Mapboard', path: '/mapboard', icon: <Map size={18} /> },
   ];
   
   // Handle login
   const handleLogin = () => {
     navigate('/auth/login');
+  };
+
+  // Handle logout
+  const handleLogout = () => {
+    localStorage.removeItem('user');
+    setIsLoggedIn(false);
+    navigate('/');
   };
   
   // Close menu when changing routes
@@ -51,18 +88,32 @@ const NavBar: React.FC = () => {
         
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-6">
-          {isLoggedIn && authLinks.map((link) => (
-            <Link
-              key={link.path}
-              to={link.path}
-              className={`flex items-center gap-1.5 text-sm font-medium transition-colors hover:text-primary ${
-                location.pathname === link.path ? 'text-primary' : 'text-muted-foreground'
-              }`}
-            >
-              {link.icon}
-              {link.name}
-            </Link>
-          ))}
+          {isLoggedIn 
+            ? authLinks.map((link) => (
+                <Link
+                  key={link.path}
+                  to={link.path}
+                  className={`flex items-center gap-1.5 text-sm font-medium transition-colors hover:text-primary ${
+                    location.pathname === link.path ? 'text-primary' : 'text-muted-foreground'
+                  }`}
+                >
+                  {link.icon}
+                  {link.name}
+                </Link>
+              ))
+            : guestLinks.map((link) => (
+                <Link
+                  key={link.path}
+                  to={link.path}
+                  className={`flex items-center gap-1.5 text-sm font-medium transition-colors hover:text-primary ${
+                    location.pathname === link.path ? 'text-primary' : 'text-muted-foreground'
+                  }`}
+                >
+                  {link.icon}
+                  {link.name}
+                </Link>
+              ))
+          }
         </nav>
         
         {/* Actions */}
@@ -80,17 +131,46 @@ const NavBar: React.FC = () => {
           {!isLoggedIn ? (
             <Button className="hidden md:flex items-center gap-1.5" onClick={handleLogin}>
               <LogIn size={16} />
-              Login
+              Sign In
             </Button>
           ) : (
-            <Link to="/profile" className="hidden md:block">
-              <div className="flex items-center gap-2">
-                <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center">
-                  <User size={16} className="text-primary" />
-                </div>
-                <span className="text-sm font-medium">Profile</span>
-              </div>
-            </Link>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                  <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center">
+                    <User size={16} className="text-primary" />
+                  </div>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-56" align="end" forceMount>
+                <DropdownMenuLabel className="font-normal">
+                  <div className="flex flex-col space-y-1">
+                    <p className="text-sm font-medium leading-none">Demo User</p>
+                    <p className="text-xs leading-none text-muted-foreground">
+                      +260123456789
+                    </p>
+                  </div>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                  <Link to="/profile" className="w-full cursor-pointer">
+                    <User className="mr-2 h-4 w-4" />
+                    <span>Profile</span>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/profile/settings" className="w-full cursor-pointer">
+                    <Settings className="mr-2 h-4 w-4" />
+                    <span>Settings</span>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={handleLogout} className="cursor-pointer">
+                  <LogOut className="mr-2 h-4 w-4" />
+                  <span>Log out</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           )}
           
           {/* Mobile Menu Toggle */}
@@ -108,32 +188,56 @@ const NavBar: React.FC = () => {
       {isMenuOpen && (
         <div className="md:hidden fixed inset-0 top-16 z-50 bg-background/80 backdrop-blur-sm animate-fade-in">
           <nav className="container divide-y divide-border">
-            {isLoggedIn && authLinks.map((link) => (
-              <Link
-                key={link.path}
-                to={link.path}
-                className={`flex items-center gap-2 p-4 text-sm font-medium transition-colors hover:text-primary ${
-                  location.pathname === link.path ? 'text-primary' : 'text-muted-foreground'
-                }`}
-              >
-                {link.icon}
-                {link.name}
-              </Link>
-            ))}
+            {isLoggedIn 
+              ? authLinks.map((link) => (
+                  <Link
+                    key={link.path}
+                    to={link.path}
+                    className={`flex items-center gap-2 p-4 text-sm font-medium transition-colors hover:text-primary ${
+                      location.pathname === link.path ? 'text-primary' : 'text-muted-foreground'
+                    }`}
+                  >
+                    {link.icon}
+                    {link.name}
+                  </Link>
+                ))
+              : guestLinks.map((link) => (
+                  <Link
+                    key={link.path}
+                    to={link.path}
+                    className={`flex items-center gap-2 p-4 text-sm font-medium transition-colors hover:text-primary ${
+                      location.pathname === link.path ? 'text-primary' : 'text-muted-foreground'
+                    }`}
+                  >
+                    {link.icon}
+                    {link.name}
+                  </Link>
+                ))
+            }
             
             <div className="p-4">
               {!isLoggedIn ? (
                 <Button className="w-full flex items-center justify-center gap-1.5" onClick={handleLogin}>
                   <LogIn size={16} />
-                  Login
+                  Sign In
                 </Button>
               ) : (
-                <Link to="/profile" className="block">
-                  <Button variant="outline" className="w-full flex items-center justify-center gap-1.5">
-                    <User size={16} />
-                    Profile
+                <div className="space-y-2">
+                  <Link to="/profile">
+                    <Button variant="outline" className="w-full flex items-center justify-center gap-1.5">
+                      <User size={16} />
+                      Profile
+                    </Button>
+                  </Link>
+                  <Button 
+                    variant="destructive" 
+                    className="w-full flex items-center justify-center gap-1.5"
+                    onClick={handleLogout}
+                  >
+                    <LogOut size={16} />
+                    Log Out
                   </Button>
-                </Link>
+                </div>
               )}
             </div>
           </nav>

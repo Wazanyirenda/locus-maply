@@ -10,6 +10,7 @@ import { ThemeProvider } from "@/hooks/useTheme";
 // Pages
 import Index from "./pages/Index";
 import Map from "./pages/Map";
+import Explore from "./pages/Explore";
 import Mapboard from "./pages/Mapboard";
 import DashboardMap from "./pages/DashboardMap";
 import Login from "./pages/auth/Login";
@@ -53,10 +54,12 @@ const App = () => {
               
               {/* Protected Routes */}
               <Route path="/map" element={<ProtectedRoute><Map /></ProtectedRoute>} />
+              <Route path="/explore" element={<ProtectedRoute><Explore /></ProtectedRoute>} />
               <Route path="/mapboard" element={<ProtectedRoute><Mapboard /></ProtectedRoute>} />
               <Route path="/mapboard/map" element={<ProtectedRoute><DashboardMap /></ProtectedRoute>} />
               <Route path="/contribute" element={<ProtectedRoute><Contribute /></ProtectedRoute>} />
               <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+              <Route path="/profile/settings" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
               
               {/* Legacy routes - redirect to new names */}
               <Route path="/dashboard" element={<Navigate replace to="/mapboard" />} />
