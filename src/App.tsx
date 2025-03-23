@@ -71,6 +71,7 @@ const App = () => {
               {/* Legacy routes - redirect to new names */}
               <Route path="/dashboard" element={<Navigate replace to="/mapboard" />} />
               <Route path="/dashboard/map" element={<Navigate replace to="/mapboard/map" />} />
+              <Route path="/dashboard/leaderboard" element={<Navigate replace to="/mapboard" />} />
               
               {/* Catch-all route */}
               <Route path="*" element={<NotFound />} />

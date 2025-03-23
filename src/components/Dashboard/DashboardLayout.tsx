@@ -1,7 +1,7 @@
 
 import React, { ReactNode } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { MapPin, BarChart3, Trophy, User, Settings, LogOut } from 'lucide-react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { MapPin, BarChart3, User, Settings, LogOut } from 'lucide-react';
 
 interface DashboardLayoutProps {
   children: ReactNode;
@@ -9,14 +9,20 @@ interface DashboardLayoutProps {
 
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const location = useLocation();
+  const navigate = useNavigate();
+  
+  // Handle logout
+  const handleLogout = () => {
+    localStorage.removeItem('user');
+    navigate('/');
+  };
   
   // Navigation links with active state
   const navLinks = [
-    { name: 'Overview', path: '/dashboard', icon: <BarChart3 size={18} /> },
-    { name: 'My Map', path: '/dashboard/map', icon: <MapPin size={18} /> },
-    { name: 'Leaderboard', path: '/dashboard/leaderboard', icon: <Trophy size={18} /> },
-    { name: 'Profile', path: '/dashboard/profile', icon: <User size={18} /> },
-    { name: 'Settings', path: '/dashboard/settings', icon: <Settings size={18} /> },
+    { name: 'Overview', path: '/mapboard', icon: <BarChart3 size={18} /> },
+    { name: 'My Map', path: '/mapboard/map', icon: <MapPin size={18} /> },
+    { name: 'Profile', path: '/profile', icon: <User size={18} /> },
+    { name: 'Settings', path: '/profile/settings', icon: <Settings size={18} /> },
   ];
   
   return (
@@ -52,7 +58,10 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
               ))}
               
               {/* Logout */}
-              <button className="flex w-full items-center gap-3 px-3 py-2 rounded-md text-sm text-foreground hover:bg-accent/50 transition-colors">
+              <button 
+                className="flex w-full items-center gap-3 px-3 py-2 rounded-md text-sm text-foreground hover:bg-accent/50 transition-colors"
+                onClick={handleLogout}
+              >
                 <LogOut size={18} />
                 Logout
               </button>

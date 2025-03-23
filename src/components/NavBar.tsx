@@ -10,7 +10,8 @@ import {
   LogOut, 
   Map, 
   User,
-  Globe 
+  Globe,
+  Settings
 } from 'lucide-react';
 import { Button } from './ui/button';
 import { useTheme } from '@/hooks/useTheme';
@@ -19,6 +20,7 @@ const NavBar: React.FC = () => {
   const { theme, setTheme } = useTheme();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
   
@@ -43,12 +45,19 @@ const NavBar: React.FC = () => {
     localStorage.removeItem('user');
     setIsLoggedIn(false);
     navigate('/');
+    setIsProfileDropdownOpen(false);
   };
   
   // Close menu when changing routes
   useEffect(() => {
     setIsMenuOpen(false);
+    setIsProfileDropdownOpen(false);
   }, [location.pathname]);
+
+  // Toggle profile dropdown
+  const toggleProfileDropdown = () => {
+    setIsProfileDropdownOpen(!isProfileDropdownOpen);
+  };
   
   return (
     <nav className="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-md border-b border-border/40 transition-all">
@@ -93,11 +102,50 @@ const NavBar: React.FC = () => {
               {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
             </button>
             
-            {/* Show either Login or Logout button based on authentication status */}
+            {/* User Profile or Login Button */}
             {isLoggedIn ? (
-              <Button variant="default" onClick={handleLogout}>
-                <LogOut className="mr-2 h-4 w-4" /> Sign Out
-              </Button>
+              <div className="relative">
+                <Button 
+                  variant="ghost" 
+                  className="flex items-center gap-2 rounded-full"
+                  onClick={toggleProfileDropdown}
+                >
+                  <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                    <User size={16} className="text-primary" />
+                  </div>
+                </Button>
+                
+                {/* Profile Dropdown */}
+                {isProfileDropdownOpen && (
+                  <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-background border border-border/40 overflow-hidden z-50 animate-fade-in">
+                    <div className="py-1">
+                      <Link 
+                        to="/profile" 
+                        className="flex items-center gap-2 px-4 py-2 text-sm hover:bg-accent"
+                        onClick={() => setIsProfileDropdownOpen(false)}
+                      >
+                        <User size={16} />
+                        Profile
+                      </Link>
+                      <Link 
+                        to="/profile/settings" 
+                        className="flex items-center gap-2 px-4 py-2 text-sm hover:bg-accent"
+                        onClick={() => setIsProfileDropdownOpen(false)}
+                      >
+                        <Settings size={16} />
+                        Settings
+                      </Link>
+                      <button 
+                        className="flex items-center gap-2 px-4 py-2 text-sm hover:bg-accent w-full text-left text-destructive"
+                        onClick={handleLogout}
+                      >
+                        <LogOut size={16} />
+                        Sign Out
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
             ) : (
               <Button variant="default" onClick={handleLogin}>
                 <LogIn className="mr-2 h-4 w-4" /> Sign In
@@ -151,11 +199,31 @@ const NavBar: React.FC = () => {
                 </Link>
               )}
               
-              {/* Show either Login or Logout button based on authentication status */}
+              {/* User Profile links or Login Button */}
               {isLoggedIn ? (
-                <Button variant="default" className="w-full" onClick={handleLogout}>
-                  <LogOut className="mr-2 h-4 w-4" /> Sign Out
-                </Button>
+                <div className="border-t border-border/40 pt-4 space-y-2">
+                  <Link 
+                    to="/profile" 
+                    className="flex items-center gap-2 text-sm hover:text-primary transition-colors"
+                  >
+                    <User size={16} />
+                    Profile
+                  </Link>
+                  <Link 
+                    to="/profile/settings" 
+                    className="flex items-center gap-2 text-sm hover:text-primary transition-colors"
+                  >
+                    <Settings size={16} />
+                    Settings
+                  </Link>
+                  <button 
+                    className="flex items-center gap-2 text-sm text-destructive hover:opacity-80 w-full text-left"
+                    onClick={handleLogout}
+                  >
+                    <LogOut size={16} />
+                    Sign Out
+                  </button>
+                </div>
               ) : (
                 <Button variant="default" className="w-full" onClick={handleLogin}>
                   <LogIn className="mr-2 h-4 w-4" /> Sign In
