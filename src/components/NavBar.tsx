@@ -3,47 +3,27 @@ import React, { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Sun, Moon, Menu, X, Map, User, BarChart3, LogIn } from 'lucide-react';
 import { Button } from './ui/button';
+import { useTheme } from '@/hooks/useTheme';
 
 const NavBar: React.FC = () => {
-  const [theme, setTheme] = useState<'dark' | 'light'>('dark');
+  const { theme, setTheme } = useTheme();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
   
-  // Initialize theme from localStorage or default to dark
+  // Check if user is logged in
   useEffect(() => {
-    const savedTheme = localStorage.getItem('theme') as 'dark' | 'light' | null;
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    
-    if (savedTheme) {
-      setTheme(savedTheme);
-      document.documentElement.classList.toggle('dark', savedTheme === 'dark');
-    } else {
-      // Default to dark theme if no preference is stored
-      setTheme('dark');
-      document.documentElement.classList.add('dark');
-    }
-    
-    // Check if user is logged in - this would be replaced with proper auth check
     const userLoggedIn = localStorage.getItem('user') !== null;
     setIsLoggedIn(userLoggedIn);
   }, []);
   
   // Toggle theme function
   const toggleTheme = () => {
-    const newTheme = theme === 'dark' ? 'light' : 'dark';
-    setTheme(newTheme);
-    document.documentElement.classList.toggle('dark', newTheme === 'dark');
-    localStorage.setItem('theme', newTheme);
+    setTheme(theme === 'dark' ? 'light' : 'dark');
   };
   
-  // Navigation links with active state
-  const navLinks = [
-    { name: 'Home', path: '/', icon: <User size={18} /> },
-  ];
-  
-  // Navigation links that require auth
+  // Navigation links for logged in users
   const authLinks = [
     { name: 'Map', path: '/map', icon: <Map size={18} /> },
     { name: 'Dashboard', path: '/mapboard', icon: <BarChart3 size={18} /> },
@@ -71,19 +51,6 @@ const NavBar: React.FC = () => {
         
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-6">
-          {navLinks.map((link) => (
-            <Link
-              key={link.path}
-              to={link.path}
-              className={`flex items-center gap-1.5 text-sm font-medium transition-colors hover:text-primary ${
-                location.pathname === link.path ? 'text-primary' : 'text-muted-foreground'
-              }`}
-            >
-              {link.icon}
-              {link.name}
-            </Link>
-          ))}
-          
           {isLoggedIn && authLinks.map((link) => (
             <Link
               key={link.path}
@@ -103,7 +70,7 @@ const NavBar: React.FC = () => {
           {/* Theme Toggle */}
           <button
             onClick={toggleTheme}
-            className="rounded-full p-2 text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
+            className="rounded-full p-2 text-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
             aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`}
           >
             {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
@@ -129,7 +96,7 @@ const NavBar: React.FC = () => {
           {/* Mobile Menu Toggle */}
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="md:hidden rounded-full p-2 text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
+            className="md:hidden rounded-full p-2 text-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
             aria-label="Toggle menu"
           >
             {isMenuOpen ? <X size={18} /> : <Menu size={18} />}
@@ -141,19 +108,6 @@ const NavBar: React.FC = () => {
       {isMenuOpen && (
         <div className="md:hidden fixed inset-0 top-16 z-50 bg-background/80 backdrop-blur-sm animate-fade-in">
           <nav className="container divide-y divide-border">
-            {navLinks.map((link) => (
-              <Link
-                key={link.path}
-                to={link.path}
-                className={`flex items-center gap-2 p-4 text-sm font-medium transition-colors hover:text-primary ${
-                  location.pathname === link.path ? 'text-primary' : 'text-muted-foreground'
-                }`}
-              >
-                {link.icon}
-                {link.name}
-              </Link>
-            ))}
-            
             {isLoggedIn && authLinks.map((link) => (
               <Link
                 key={link.path}
