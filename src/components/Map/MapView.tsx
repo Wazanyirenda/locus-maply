@@ -2,7 +2,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import useMap, { MapFilters } from '@/hooks/useMap';
 import MapControls from './MapControls';
-import { MapPin, Layers, Plus, PlusCircle } from 'lucide-react';
+import { MapPin, Layers, Plus, PlusCircle, X } from 'lucide-react';
 import LocationForm from '../LocationForm';
 import { useToast } from '@/components/ui/use-toast';
 
