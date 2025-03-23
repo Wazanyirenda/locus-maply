@@ -1,7 +1,7 @@
 
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Globe2 } from "lucide-react";
 import { useTheme } from "@/hooks/useTheme";
 
@@ -17,7 +17,7 @@ const Hero = () => {
 
   const handleExploreClick = () => {
     // Navigate to login if not logged in, otherwise to explore
-    isLoggedIn ? navigate('/map') : navigate('/auth/login');
+    isLoggedIn ? navigate('/explore') : navigate('/auth/login');
   };
 
   const handleContributeClick = () => {

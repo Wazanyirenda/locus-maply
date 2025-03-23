@@ -12,7 +12,7 @@ const Explore = () => {
           Discover locations across Africa and see contributions from the community.
         </p>
         
-        <div className="h-[70vh] min-h-[500px] w-full glass-card overflow-hidden p-0 rounded-lg">
+        <div className="h-[70vh] min-h-[500px] w-full border border-border rounded-lg overflow-hidden">
           <MapView />
         </div>
       </div>

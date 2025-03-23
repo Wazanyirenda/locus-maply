@@ -26,7 +26,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   
   useEffect(() => {
-    // This would be replaced with a proper auth check
+    // Check if user exists in localStorage
     const user = localStorage.getItem('user');
     setIsLoggedIn(user !== null);
   }, []);
@@ -51,10 +51,10 @@ const App = () => {
               <Route path="/" element={<Index />} />
               <Route path="/auth/login" element={<Login />} />
               <Route path="/auth/signup" element={<Signup />} />
+              <Route path="/explore" element={<Explore />} />
               
               {/* Protected Routes */}
               <Route path="/map" element={<ProtectedRoute><Map /></ProtectedRoute>} />
-              <Route path="/explore" element={<ProtectedRoute><Explore /></ProtectedRoute>} />
               <Route path="/mapboard" element={<ProtectedRoute><Mapboard /></ProtectedRoute>} />
               <Route path="/mapboard/map" element={<ProtectedRoute><DashboardMap /></ProtectedRoute>} />
               <Route path="/contribute" element={<ProtectedRoute><Contribute /></ProtectedRoute>} />
